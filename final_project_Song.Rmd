@@ -1,6 +1,6 @@
 ---
-title: "BMIN503/EPID600 Project Template"
-author: "Your Name"
+title: "BMIN503/EPID600 Project"
+author: "Weilu Song"
 output: 
   html_document:
     theme: paper 
@@ -15,15 +15,45 @@ Use this template to complete your project throughout the course. Your Final Pro
 Give a brief a description of your project and its goal(s), what data you are using to complete it, and what two faculty/staff in different fields you have spoken to about your project with a brief summary of what you learned from each person. Include a link to your final project GitHub repository.
 
 
+
 ### Introduction 
 Describe the problem addressed, its significance, and some background to motivate the problem.
 
 Explain why your problem is interdisciplinary, what fields can contribute to its understanding, and incorporate background related to what you learned from meeting with faculty/staff.
 
+##### Backgroud 
+PrEP has been proven as an effective way to prevent high risk population from HIV infection. However, due to influence of several structural and nonstructural determinants, there is a huge challenge to advocate among target population especially in developing countries. Jilinde project, which was conducted in Kenya from 2017-2019, is consisted by multiple sub studies related to HIV/AIDS prevention. The main aime for this project is identifying the demand gap of PrEP and further provide the intervention strategy for policy makers and other stakeholders.\ 
+
+##### Hypothsis
+
+
 
 ### Methods
 Describe the data used and general methodological approach. Subsequently, incorporate full R code necessary to retrieve and clean data, and perform analysis. Be sure to include a description of code so that others (including your future self) can understand what you are doing and why. 
 
+#### 1. Data preparation
+#####  Data loading
+#####  Data inspection
+#####  Data cleaning
+#####  Missing data inspection and imputation
+
+#### 2. Using Machine learning to explore variables 
+##### Associated variable selection
+##### ML model analysis
+
+#### 3.Causal inferenece analysis
+
+##### DAG bassed on ML result
+
+##### Casusal inference model: G-computation
 
 ### Results
 Describe your results and include relevant tables, plots, and code/comments used to obtain them. End with a brief conclusion of your findings related to the question you set out to address. You can include references if you'd like, but this is not required.
+
+##### Table-1: Demographic comparision
+
+##### Table-2: Adjusted test: Regression model
+
+##### Table-3: Model comparision: ML model and casual inference model (G-computation)
+
+##### Map for result
