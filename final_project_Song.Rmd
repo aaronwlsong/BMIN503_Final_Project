@@ -14,7 +14,12 @@ Use this template to complete your project throughout the course. Your Final Pro
 ### Overview
 Give a brief a description of your project and its goal(s), what data you are using to complete it, and what two faculty/staff in different fields you have spoken to about your project with a brief summary of what you learned from each person. Include a link to your final project GitHub repository.
 
+Addressing demand gap for PrEP promotion among high risk population is a challenge in developing country, To better control HIV/AIDS, it urgently needs to explore the related impact determinants and further understand casual factors for low percent of PrEP usage. In this project, the Jilinde study dataset is used to analyze the potential predictors that may impact the PrEP.\
 
+This project is under mentored by two professors. One is John H. Holmes, who is the professor of Medical Informatics in Epidemiology, department of Biostatistics, Epidemiology and informatics and his expertise is infectious diseases and machine learning; Another mentor is Jesse Yenchih Hsu, who is assistant Professor of Biostatistics, Professor of Biostatistics, department of Biostatistics, Epidemiology and informatics. \
+
+The original files of this final project can be accessed from here: [Final project_Song]("https://github.com/aaronwlsong/BMIN503_Final_Project") \
+ 
 
 ### Introduction 
 Describe the problem addressed, its significance, and some background to motivate the problem.
