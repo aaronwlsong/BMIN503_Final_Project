@@ -12,37 +12,67 @@ output:
 Use this template to complete your project throughout the course. Your Final Project presentation will be based on the contents of this document. Replace the title/name above and text below with your own, but keep the headers. Feel free to change the theme and other display settings, but this is not required.
 
 ### Overview
-Give a brief a description of your project and its goal(s), what data you are using to complete it, and what two faculty/staff in different fields you have spoken to about your project with a brief summary of what you learned from each person. Include a link to your final project GitHub repository.
+To better control HIV infection among high risk population, it urgently needs to explore the relationship between related determinants that may affect Pre-Exposure Prophylaxis (PrEP) usage. Jilinde PrEP cohort study was conducted in Kenya, it contains over 1000 participants and over 100 variables that related to PrEP usage among high risk population. In this project, this dataset is used to analyze the potential PrEP predictors that may impact the PrEP usage among targeted population.\
 
-Addressing demand gap for PrEP promotion among high risk population is a challenge in developing country, To better control HIV/AIDS, it urgently needs to explore the related impact determinants and further understand casual factors for low percent of PrEP usage. In this project, the Jilinde study dataset is used to analyze the potential predictors that may impact the PrEP.\
 
-This project is under mentored by two professors. One is John H. Holmes, who is the professor of Medical Informatics in Epidemiology, department of Biostatistics, Epidemiology and informatics and his expertise is infectious diseases and machine learning; Another mentor is Jesse Yenchih Hsu, who is assistant Professor of Biostatistics, Professor of Biostatistics, department of Biostatistics, Epidemiology and informatics. \
 
-The original files of this final project can be accessed from here: [Final project_Song]("https://github.com/aaronwlsong/BMIN503_Final_Project") \
+The original files of this final project can be accessed from here: [Final project_Song](https://github.com/aaronwlsong/BMIN503_Final_Project) \
  
 
 ### Introduction 
-Describe the problem addressed, its significance, and some background to motivate the problem.
+Pre-Exposure Prophylaxis (PrEP) has been proven an effective way to prevent HIV infection, however, the PrEP coverage among high risk population is still low. The reason behind this challenge is complex, because using PrEP is determined by multiple factors such as social determinants, self-perception, and clinical history.Since those influence factors are interdisciplinary, it is hard to extract the highly associated variables to the outcome manually based on the individual experience. It is much easier if the advanced statistical method can be applied to help figure out the association and further, using the casual inference theory to explore the reason that causes the low usage of PrEP.
 
-Explain why your problem is interdisciplinary, what fields can contribute to its understanding, and incorporate background related to what you learned from meeting with faculty/staff.
+Addressing this issue, the two faculties provided solutions in different aspects.For exploration of associated factors, depend on the outcome type, we can choose linear regression model to select those statistically associated factors to outcome.  
 
-##### Backgroud 
-PrEP has been proven as an effective way to prevent high risk population from HIV infection. However, due to influence of several structural and nonstructural determinants, there is a huge challenge to advocate among target population especially in developing countries. Jilinde project, which was conducted in Kenya from 2017-2019, is consisted by multiple sub studies related to HIV/AIDS prevention. The main aime for this project is identifying the demand gap of PrEP and further provide the intervention strategy for policy makers and other stakeholders.\ 
+Then the machine learning method can be used for the prediction analysis.If the binary outcome from the dataset, then we can use the random forest tree with k-cross validation to establish a model and then use ROC to see whether the model is sufficient to predict all related predictors.
+Further, if we want to explore the causal inference among the model, we can use DAG to get minimal set of potential confounder based on the associated factors analysis, then establish G-computation model to further calculate.
+
 
 ##### Hypothsis
-
 
 
 ### Methods
 Describe the data used and general methodological approach. Subsequently, incorporate full R code necessary to retrieve and clean data, and perform analysis. Be sure to include a description of code so that others (including your future self) can understand what you are doing and why. 
 
 #### 1. Data preparation
-#####  Data loading
-#####  Data inspection
-#####  Data cleaning
-#####  Missing data inspection and imputation
+```{r}
+pacman::p_load(rio, here,skimr,tidyverse,dplyr,haven,codebook,knitr,BiocManager,rlist,tools,qdapTools,janitor,fastDummies,labelled,magrittr,plyr,readxl,data.table,purrr,stringr,readxl,tidyr,dplyr,fastDummies,questionr,sqldf, fs, kableExtra, lubridate, mice, VIM )
+```
 
-#### 2. Using Machine learning to explore variables 
+#####  Data loading
+```{r}
+df503<-rio::import(here::here("rawdata","jilinde_coh_2022aug.csv"))
+# Set up 25%-dropping rule for all variables (drop off variables which have over 25% missing) 
+dfmissing<-skim(df503)%>%
+           as_tibble()%>%
+  filter(complete_rate>=0.70)%>%
+  filter(character.empty<= nrow(df503)*0.3)
+
+df503new<-df503%>%
+  select(dfmissing$skim_variable, partner_2, partner_3, longitude,latitude)%>%
+  select(everything(),-c(data_access_group, part1_name))
+```
+
+#####  Data inspection & cleaning
+```{r}
+# Take a deep look to add back some variables, derived variables and simple imputation.
+
+cols<-names(df503new)[!(names(df503new) %in% c("part1_period_start", "part1_period_end", "record_id","longitude","latitude"))]
+df503new%>%
+  mutate( partner_more=if_else(had_a_partner=="Yes" & (partner_2=="Yes"| partner_3=="Yes"), "Yes", "No"),
+          part1_period_start=mdy(part1_period_start),
+          part1_period_end=mdy(part1_period_end))%>%
+  fill(longitude, latitude, .direction = "updown")%>%
+   mutate_each_(funs(factor(.)),cols) #convert to factor
+```
+
+#####  Missing data inspection and imputation
+```{r}
+skim(df503new)
+
+```
+
+#### 2.Using Machine learning to explore variables 
 ##### Associated variable selection
 ##### ML model analysis
 
