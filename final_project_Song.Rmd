@@ -20,75 +20,246 @@ The original files of this final project can be accessed from here: [Final proje
  
 
 ### Introduction 
-Pre-Exposure Prophylaxis (PrEP) has been proven an effective way to prevent HIV infection, however, the PrEP coverage among high risk population is still low. The reason behind this challenge is complex, because using PrEP is determined by multiple factors such as social determinants, self-perception, and clinical history.Since those influence factors are interdisciplinary, it is hard to extract the highly associated variables to the outcome manually based on the individual experience. It is much easier if the advanced statistical method can be applied to help figure out the association and further, using the casual inference theory to explore the reason that causes the low usage of PrEP.
+Pre-Exposure Prophylaxis (PrEP) has been proven an effective way to prevent HIV infection, however, the PrEP coverage among high risk population is still low. The reason behind this challenge is complex, because using PrEP is determined by multiple factors such as social determinants, self-perception, and clinical history.Since those influence factors are interdisciplinary, it is hard to extract the highly associated variables to the outcome manually based on the individual experience. It is much easier if the advanced statistical method can be applied to help figure out the association and further, using the casual inference theory to explore the reason that causes the low usage of PrEP. \
+\
+However, as aforementioned, the factors that may affect the decision of taking PrEP across multiple aspects, when the study carries the survey, it always tries the best to capture all of the characteristics of them. Therefore, a typical epidimiologic dataset contains over 100 or sometimes couple hundrends related variables. In addition to that, some of those variables are highly correlated, it is hard to find the association especially the significant association among the all variables merely based on background knowledge and manually selection. \
+\
+The machine learning method provides an solution addressed this challenge. Using the best fitted model, it can not only help us to pick up the most significant associated variables among the hundreds variables dataset, but also enable us to to optimize the model based on causal inferential theory, and further to achieve the satisfied predictive result. \
 
-Addressing this issue, the two faculties provided solutions in different aspects.For exploration of associated factors, depend on the outcome type, we can choose linear regression model to select those statistically associated factors to outcome.  
+In this study, we use this JILINDE cohort study, but only the baseline completed dataset to explore the significant predictor for decision of taking PrEP, by applying the dataset into multiple supervised machine learning models to find the most significant predictor, from there, the research also demonstrate how to applied causal inferential theory on the selected variables and model to further optimize it to maximize its AUC value. We expect to through this research, it can provide practical references for HIV prevention through PrEP in local area, moreover, present a plausible way to optimize model by integrating causal inferential theory to machine learning model. \ 
+\
 
-Then the machine learning method can be used for the prediction analysis.If the binary outcome from the dataset, then we can use the random forest tree with k-cross validation to establish a model and then use ROC to see whether the model is sufficient to predict all related predictors.
-Further, if we want to explore the causal inference among the model, we can use DAG to get minimal set of potential confounder based on the associated factors analysis, then establish G-computation model to further calculate.
-
-
+Addressing this issue, the two faculties provided solutions in different aspects.For exploration of associated factors, depend on the outcome type, we can choose linear regression model to select those statistically associated factors to outcome.  \
+\
 ##### Hypothsis
+Given the introduction, in the research, the primary aim is exploring significant predictors for outcome: Decision of taking PrEP. And the secondary aim: Compare different machine learning models' effective given the unbalanced outcome.\
 
-
+              
 ### Methods
-Describe the data used and general methodological approach. Subsequently, incorporate full R code necessary to retrieve and clean data, and perform analysis. Be sure to include a description of code so that others (including your future self) can understand what you are doing and why. 
+Describe the data used and general methodological approach. Subsequently, incorporate full R code necessary to retrieve and clean data, and perform analysis. Be sure to include a description of code so that others (including your future self) can understand what you are doing and why. \
+\
+Given the consideration of workload of missing data imputation, complication of analysis of repeated measure dataset and etc, to simply the whole work whithin the limited time, and regard to the two study aimes, we curate the four times repeated cohort dataset, only use the baseline data for the final analysis. In addition, in data cleaning process, we remove the observations with missing data, using the completed dataset for our analysis. \
+\
+**Outcome variable inspection** We use barplot to inspect the outcome variable, to see whether it has balanced outcomes across yes and no group. \ 
+\
+**Variable selection** After cleaning the dataset, we first decide the outcome variable give the primary study hypothesis. The outcome variable is agree_prep, which has the definition of whether agree to take PrEP. Then we used rest of variables as predictor to find the significant predictors to this outcome at a=0.05 level. The selected variables is firstly  used GLM model, and then use the random forest tree to replicate the process to get top significant predictors based on the Gini score. We list the Gini score from the RF and P-value from GLM side by side to highlighted how many variables are overlapped in these two methods. \
+\
+**Model evaluation** Because the outcome variable has very unbalanced binary values based on the result of outcome variable inspection, we further use SVM, Random forest tree and GLM in k-cross validation (k=10) and ROC curve to evaluate each model's performance.\
+\
+**Optimize selected model** The selected model and variables are used to generate the final result. The variables are selected based on the table which lists the overlapped variables from RF and GLM model aforementioned. In this process, we first take top 6 significant predictors generated by GLM model, and make sure all of them are also in result of Random forest tree. We use these 6 predictors to establish the first model. Then, we create the second model by applying causal inferential theory and using DAG to further adjust the variables in the model. For example, we remove some intermediate variable and collider, and add some variables from the variable list we created to adjusted those potential confounders. Then, we run the ROC to compare these two model's performance to see whether the casual inferential theory helps to improve the performance of the predictive model. \
+\
+
+**Present result** We will use the best performance model to present our result regard to the primary hypothesis. \
 
 #### 1. Data preparation
-```{r}
-pacman::p_load(rio, here,skimr,tidyverse,dplyr,haven,codebook,knitr,BiocManager,rlist,tools,qdapTools,janitor,fastDummies,labelled,magrittr,plyr,readxl,data.table,purrr,stringr,readxl,tidyr,dplyr,fastDummies,questionr,sqldf, fs, kableExtra, lubridate, mice, VIM )
+```{r message=F, warning=F}
+pacman::p_load(rio, here,skimr,tidyverse,dplyr,haven,codebook,knitr,BiocManager,rlist,tools,qdapTools,janitor,fastDummies,labelled,magrittr,plyr,readxl,data.table,purrr,stringr,readxl,tidyr,dplyr,fastDummies,questionr,sqldf, fs, kableExtra, lubridate, mise,mice, VIM,mitools, sjmisc,randomForest,pROC,PRROC,glmnet, factoextra, ggdendro, Rtsen,devtools,e1071)
+library(devtools)
+install_github("vqv/ggbiplot")
 ```
 
-#####  Data loading
-```{r}
-df503<-rio::import(here::here("rawdata","jilinde_coh_2022aug.csv"))
-# Set up 25%-dropping rule for all variables (drop off variables which have over 25% missing) 
-dfmissing<-skim(df503)%>%
-           as_tibble()%>%
-  filter(complete_rate>=0.70)%>%
-  filter(character.empty<= nrow(df503)*0.3)
+#####  Data loading and cleaning
+```{r message=F, warning=F}
+rm(list=ls())
+# Retreive baseline data from cohort study
+df503<-rio::import(here::here("rawdata","jilinde_coh_2022aug.csv"))%>%
+  filter(event_name=="Baseline")
 
-df503new<-df503%>%
-  select(dfmissing$skim_variable, partner_2, partner_3, longitude,latitude)%>%
-  select(everything(),-c(data_access_group, part1_name))
+# Remove the missing value and only one unique value. 
+dfcheck<-skim(df503)%>%
+  as.tibble()%>%
+  filter(character.empty==0)%>% # Keep completed case
+  filter(character.n_unique >1) #Remove only one level factor
+
+#Convert categorical variables as factor and derived age group: agegrp based on continous var: age
+fdat<-df503%>%
+   select(dfcheck$skim_variable, agree_prep, age)%>%
+   mutate(age=as.numeric(age),
+          agegrp=case_when(age<18|age==18~"Teen",
+                           age>18&age<30|age==30~"Young",
+                           age>30&age<60~"Adult",
+                           age>60|age==60 ~"Old",))%>%
+   filter(agree_prep!="")%>% #Remove the null value in outcome
+   select(everything(), -c(age,data_access_group, record_id, record_create_date))%>%
+   mutate_each_(funs(factor(.)),names(dfcheck$skim_variable)) #remove unused variable 
+
+cols<-names(fdat)[!(names(fdat) %in% c("age"))]
+ fdat<-fdat%<>%mutate_each_(funs(factor(.)),cols) #convert to factors
+
+#str(fdat) 
+table(fdat$agree_prep)
+#colSums(is.na(fdat))
 ```
 
-#####  Data inspection & cleaning
-```{r}
-# Take a deep look to add back some variables, derived variables and simple imputation.
+#### 2. Dependent/outcome variable inspection
 
-cols<-names(df503new)[!(names(df503new) %in% c("part1_period_start", "part1_period_end", "record_id","longitude","latitude"))]
-df503new%>%
-  mutate( partner_more=if_else(had_a_partner=="Yes" & (partner_2=="Yes"| partner_3=="Yes"), "Yes", "No"),
-          part1_period_start=mdy(part1_period_start),
-          part1_period_end=mdy(part1_period_end))%>%
-  fill(longitude, latitude, .direction = "updown")%>%
-   mutate_each_(funs(factor(.)),cols) #convert to factor
+```{r message=F, warning=F}
+ggplot(fdat, aes(factor(agree_prep), fill= factor(agree_prep)))+
+  geom_bar()+
+  xlab("Agree to take PrEP")+
+  geom_text( stat = "count", aes(label = ..count..), vjust = 1.5, colour = "black")+
+  scale_fill_brewer(palette = "Pastel1")+
+  theme_classic()
+```
+As we can see from the bar plot, in this dataset, the outcome for this research is extremly unbalnced. The participants who would like to take PrEP are 1108, whereas only 24 participants chose No. That will introduce the nagtive influences to the machine learning in next step. \
+
+#### 3.Using Machine learning method to explore variables 
+##### Select significant associated variables by using GLM
+```{r message=F, warning=F}
+# Finding a significant associated variables by using glm model.
+datsig<-fdat%>%
+  pivot_longer(cols = -c(agree_prep)) %>%
+  nest(data = -name) %>%
+  mutate(mod = map(data, ~glm(agree_prep~value, data = .x, family = binomial())),
+         p.value = map_dbl(mod, ~summary(.x)$coefficients[2,4])) %>%
+  filter(p.value < 0.05)%>%
+  #mutate(No.=seq_along(name))%>%
+  select(Var_Name=name, `P-value`=p.value)%>%
+  arrange(`P-value`) 
+  kbl(datsig)%>%
+    kable_classic(full_width=F, html_font = "Cambria") 
 ```
 
-#####  Missing data inspection and imputation
-```{r}
-skim(df503new)
+
+#### Replicate the selecting process by another ML models: Random forest tree and SVM.
+```{r message=F, warning=F}
+# Random forest tree: Top 10 dfgini
+library(randomForest)
+df.rf <- randomForest(agree_prep ~ ., data =fdat, ntree = 200, importance = TRUE)
+df.rf
+#df.rf$importance
+df.gini<-sort(df.rf$importance[,4], decreasing =T)
+dfgini<-head(df.gini,18)
+  kbl(dfgini, caption="Top 11 predictors with the high gini score", digits = 3)%>%
+    kable_classic(full_width=F, html_font = "Cambria") 
+
+# SVM
+library(e1071)
+fdat.svm <- svm(agree_prep ~ ., data = fdat, scale = TRUE, kernel ="radial")
+svm.pred <- fitted(fdat.svm)
+table(fdat$agree_prep, svm.pred) 
+```
+
+#### Create the significant associated variable list based on RF and GLM model 
+
+```{r message=F, warning=F}
+# Present the two selected results:
+kbl(cbind(dfgini, datsig),caption="Comparison of two top-ranked varaibles", digits = 3)%>%
+    add_header_above(c("Random Forest Model"= 2, "GLM Model" = 2))%>%
+   kable_classic(full_width=F, html_font = "Cambria")
+```
+
+##### 3.Using Machine learning method to evaluate model's performance and select a model
+```{r message=F, warning=F}
+N = nrow(fdat)
+K = 10
+set.seed(1234)
+s = sample(1:K, size = N, replace = T)
+pred.outputs.svm<- vector(mode = "numeric", length = N)
+pred.outputs.glm<- vector(mode = "numeric", length = N)
+pred.outputs.rf <- vector(mode = "numeric", length = N)
+obs.outputs <- vector(mode = "numeric", length = N)
+offset <- 0
+for(i in 1:K){
+    train <- filter(fdat, s != i)
+    test <- filter(fdat, s == i)
+    obs.outputs[1:length(s[s == i]) + offset] <- test$agree_prep
+
+    #SVM train/test
+    svm.m <- svm(agree_prep~identity_group_msm+service_received_msm_hiv+service_received_msm_risk+risk_low_known+risk_low_condoms+risk_low_never, data = train, scale = TRUE, 
+                 kernel = "radial", probability = TRUE)
+    svm.pred.curr <- predict(svm.m, test, probability = TRUE) 
+    pred.outputs.svm[1:length(s[s == i]) + offset] <- attr(svm.pred.curr, "probabilities")[ , 1]
+    
+  #GLM train/test
+    df.glm<-glm(agree_prep~identity_group_msm+service_received_msm_hiv+service_received_msm_risk+risk_low_known+risk_low_condoms+risk_low_never, data =fdat, family = binomial())
+    glm.pred.curr <- predict(df.glm, newdata=test, type="response") 
+    pred.outputs.glm[1:length(s[s == i]) + offset] <- glm.pred.curr
+    
+    
+    #RF train/test
+    rf <- randomForest(agree_prep~identity_group_msm+service_received_msm_hiv+service_received_msm_risk+risk_low_known+risk_low_condoms+risk_low_never, data = train, ntree = 100) 
+    rf.pred.curr <- predict(rf, newdata = test, type = "prob") 
+    pred.outputs.rf[1:length(s[s == i]) + offset] <- rf.pred.curr[ , 2]
+    
+    offset <- offset + length(s[s == i])
+}
+library(pROC)
+plot.roc(obs.outputs, pred.outputs.svm, ci = TRUE, col = "blue")
+plot.roc(obs.outputs, pred.outputs.rf, ci = TRUE, col = "darkgreen", add = TRUE)
+plot.roc(obs.outputs, pred.outputs.glm, ci = TRUE, col = "red", add = TRUE)
+legend("bottomright", legend = c("SVM", "Random foreast tree","GLM"), col = c("blue", "darkgreen","red"), lwd = 2, cex=.7)
 
 ```
 
-#### 2.Using Machine learning to explore variables 
-##### Associated variable selection
-##### ML model analysis
+##### Create first GlM Model based on top 6 significant variables which are also overlapped in RF result 
+```{r message=F, warning=F}
+glmfdat<-glm(agree_prep~identity_group_msm+service_received_msm_hiv+service_received_msm_risk+risk_low_known+risk_low_condoms+risk_low_never, data =fdat, family = binomial())
+s<-summary(glmfdat)
+sdf<-as.data.frame(s$coefficients) 
+z<-exp(coef(glm(agree_prep~identity_group_msm+service_received_msm_hiv+service_received_msm_risk+risk_low_known+risk_low_condoms+risk_low_never, data=fdat, family = binomial()))) 
 
-#### 3.Causal inferenece analysis
+z<-as.data.frame(round(z,3))%>%
+  select(Exp_coeff="round(z, 3)")
+  kbl(cbind(sdf,z), caption="", digits = 3)%>%
+    kable_classic(full_width=F, html_font = "Cambria")
 
-##### DAG bassed on ML result
+  
+  glmfdat2<-glm(agree_prep~identity_group_msm+service_received_msm_hiv+service_received_msm_risk+risk_low_known+risk_low_condoms+risk_low_never+agegrp+risk_low_never+service_received_msm_peer, data =fdat, family = binomial())
+  s2<-summary( glmfdat2)
+  sdf2<-as.data.frame(s2$coefficients) 
+  z2<-exp(coef(glm(agree_prep~identity_group_msm+service_received_msm_hiv+service_received_msm_risk+risk_low_known+risk_low_condoms+risk_low_never+agegrp+risk_low_never+service_received_msm_peer, data=fdat, family = binomial()))) 
+  z2<-as.data.frame(round(z2,3))%>%
+  select(Exp_coeff="round(z2, 3)")
+  kbl(cbind(sdf2,z2), caption="", digits = 3)%>%
+    kable_classic(full_width=F, html_font = "Cambria")
 
-##### Casusal inference model: G-computation
+```
+
+
+#### Create the sconde GLM model based on the adjusted variable after applying causal inferential theory and compare two models'performance
+```{r message=F, warning=F}
+N = nrow(fdat)
+K = 10
+set.seed(1234)
+s = sample(1:K, size = N, replace = T)
+pred.outputs.glm<- vector(mode = "numeric", length = N)
+pred.outputs.glm2<- vector(mode = "numeric", length = N)
+obs.outputs <- vector(mode = "numeric", length = N)
+offset <- 0
+for(i in 1:K){
+    train <- filter(fdat, s != i)
+    test <- filter(fdat, s == i)
+    obs.outputs[1:length(s[s == i]) + offset] <- test$agree_prep
+
+    
+  #GLM train/test: First model with top 6 significant predictors in GLM model
+    df.glm<-glm(agree_prep~identity_group_msm+service_received_msm_hiv+service_received_msm_risk+risk_low_known+risk_low_condoms+risk_low_never, data =fdat, family = binomial())
+    glm.pred.curr <- predict(df.glm, newdata=test, type="response") 
+    pred.outputs.glm[1:length(s[s == i]) + offset] <- glm.pred.curr
+    
+  #GLM train/test: Second model with adjusted variables based on causal inferential theory
+        df.glm2<-glm(agree_prep~identity_group_msm+service_received_msm_hiv+risk_low_known+risk_low_condoms+risk_low_never+agegrp+risk_low_never+service_received_msm_peer, data =fdat, family = binomial())
+    glm.pred.curr2 <- predict(df.glm2, newdata=test, type="response") 
+    pred.outputs.glm2[1:length(s[s == i]) + offset] <- glm.pred.curr2
+    
+   offset <- offset + length(s[s == i])
+}
+library(pROC)
+plot.roc(obs.outputs, pred.outputs.glm, ci = TRUE, col = "darkgreen")
+plot.roc(obs.outputs, pred.outputs.glm2, ci = TRUE, col = "red", add = TRUE)
+legend("bottomright", legend = c(str_c("GLM: Unadjusted variables."," ","AUC=", round(auc(obs.outputs, pred.outputs.glm),2)),str_c("GLM: Adjusted variables by DAG."," ","AUC=", round(auc(obs.outputs, pred.outputs.glm2),2))), col = c("darkgreen","red"), lwd =2, cex=.7)
+```
+
 
 ### Results
-Describe your results and include relevant tables, plots, and code/comments used to obtain them. End with a brief conclusion of your findings related to the question you set out to address. You can include references if you'd like, but this is not required.
+Describe your results and include relevant tables, plots, and code/comments used to obtain them. End with a brief conclusion of your findings related to the question you set out to address. You can include references if you'd like, but this is not required.\
 
-##### Table-1: Demographic comparision
+The Jilinde study has total 4115 obs. and 367 variables. After data cleaning, the final dataset downsize to 1132 obs. and 106 variables. Among all of these variables, 18 variables are selected by GLM model as the significant predictors for outcome. And most of the variables are overlapped with Random forest tree's result. \
 
-##### Table-2: Adjusted test: Regression model
+The outcome inspection result shows that the dependent variable has extreme unbalanced outcomes.This introduce very unsatisfied model performance in the next step. The SVM, random forest tree and GLM are used K-cross validation to dynamically simulate the predictive results. ROC curve shows that among all methods, GLM has the best performance given the biggest AUC. \
 
-##### Table-3: Model comparision: ML model and casual inference model (G-computation)
+Then the GLM and top 6 significant predictors are used to generate the result, it shows that risk_low_neverUnchecked (p-value=0.005), risk_low_condomsUnchecked(p-value=0.002), and risk_low_knownUnchecked(p-value=0.049) are siginifcant predictors for outcome taking PrEP. Among them, the people who choose the No for never had sex (is equal to people who have had sex) shows 26 times higher interest to take PrEP compared to the people who responded that never had sex (risk_low_never checked).\
 
-##### Map for result
+After adjusted model based on the causal inferential theory, some variables are added and the results shows that service_received_msm_riskUnchecked (p-value=0.038), risk_low_condomsUnchecked (p-value=0.000) , risk_low_neverUnchecked (p-value=0.001) are 3 most significant predictors towards to outcome: agree to take PrEP. The result shows that the people who have had sex shows the most intention to take PrEP, which imply the intervention and adviertising direction among the high risk population when it comes to the uptake PrEP. \ 
+
