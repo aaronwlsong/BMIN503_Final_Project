@@ -37,3 +37,5 @@ Result: The GLM model with variables that are adjusted based on causal inferenti
 
 Limitation: Unbalanced outcome affect the performance and accuracy when run different ML models.
                   Using completed dataset will introduce the bias since the missing value is not completed random. 
+                  
+                  

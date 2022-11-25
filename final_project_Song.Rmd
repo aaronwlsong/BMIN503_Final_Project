@@ -28,32 +28,40 @@ In recent decade, machine learning method has been widely appided in more and mo
 \
 In this study, we use this JILINDE cohort study, but only the baseline completed dataset to explore the significant predictor for decision of taking PrEP, by applying the dataset into multiple supervised machine learning models to find the most significant predictor, from there, the research also demonstrate how to applied causal inferential theory on the selected variables and model to further optimize it to maximize its AUC value. We expect to through this research, it can provide practical references for HIV prevention through PrEP in local area, moreover, present a plausible way to optimize model by integrating causal inferential theory to machine learning model. \ 
 \
+
 ##### Hypothsis
-Given the introduction, in this research, the primary aim is exploring significant predictors for outcome: Decision of taking PrEP (original variable name: agree_prep). And the secondary aim: Compare different machine learning model's performances given a imbalanced dataset.\
+Given the introduction, in this research, the **primary aim** is exploring significant predictors for outcome: Decision of taking PrEP (original variable name: agree_prep). And the **secondary aim** is comparing different machine learning model's performances given a imbalanced dataset.\
 
               
 ### Methods
-Describe the data used and general methodological approach. Subsequently, incorporate full R code necessary to retrieve and clean data, and perform analysis. Be sure to include a description of code so that others (including your future self) can understand what you are doing and why. \
 \
-Given the consideration of workload of missing data imputation, complication of analysis of repeated measure dataset and etc, to simply the whole work whithin the limited time, and regard to the two study aimes, we curate the four times repeated cohort dataset, only use the baseline data for the final analysis. In addition, in data cleaning process, we remove the observations with missing data, using the completed dataset for our analysis. \
+Given the consideration of workload of missing data imputation, complication of analysis of repeated measure dataset and etc, in this project, we curate the dataset by only using the baseline data for the final analysis. In addition, in data cleaning process, instead of imputing the missing data, we remove the observations with missing data, using the completed dataset for analysis. \
 \
-**Outcome variable inspection** Fist, we pick up a outcome variable based on primary study hypothesis. The outcome variable is agree_prep, which has the definition of whether agree to take PrEP. barplot is used to inspect the outcome variable, to see whether it has balanced outcomes across yes and no group. \
+**Step 1: Outcome variable inspection** Fist, we pick up a outcome variable based on primary study hypothesis. The outcome variable is agree_prep, which has the definition of whether agree to take PrEP. barplot is used to inspect the outcome variable, to see whether it has balanced outcomes across yes and no group. \
 \
-**Demographic variable inspection** Second, we use the map tool,barplot and violin plot to explore the single relationship between each demographic variable and outcome. For example, map tool shows the distribution of study sites given the gross income and age in Kenya. Then the Table 1 is used to present the overall results. \  
+**Step 2: Demographic variable inspection** Second, we use the map tool,barplot and violin plot to explore the single relationship between each demographic variable and outcome. For example, map tool shows the distribution of study sites given the gross income and age in Kenya. Then the Table 1 is used to present the overall results. \  
 \
-**Variable selection** Third, Then we used variables (other than outcome vairiable) as predictors to find the statistical significant predictors that are related to outcome at a=0.05 level. This process is firstly used GLM model, and then use the random forest tree to replicate the process and collect top significant predictors based on the Gini score result. We list the Gini score result from the RF and P-value from GLM side by side to highlighted how many variables are overlapped in these two methods. \
+**Step 3: Variable selection** Third, Then we used variables (other than outcome vairiable) as predictors to find the statistical significant predictors that are related to outcome at $\alpha$=0.05 level. This process is firstly used GLM model, and then use the random forest tree to replicate the process and collect top significant predictors based on the Gini score result. We list the Gini score result from the RF and P-value from GLM side by side to highlighted how many variables are overlapped in these two methods. \
 \
-**Model evaluation** Fourth, because of imbalanced dataset we used in this research, to compare and choose the best model to handle this type of dataset, we compare 3 machine learning models: SVM, Random forest tree and GLM, then use k-cross validation (k=10), ROC curve and AUC to evaluate each model's performance.\
+**Step 4: Model evaluation** Fourth, because of imbalanced dataset we used in this research, to compare and choose the best model to handle this type of dataset, we compare 3 machine learning models: SVM, Random forest tree and GLM, then use k-cross validation (k=10), ROC curve and AUC to evaluate each model's performance.\
 \
-**Optimize selected model** \
+
+**Step 5: Create original GLM model**\
 1) The original GLM model. The original model will be use the top 6 statistical significant variables/predictors that are selected by GLM, meanwhile, these 6 variables must be also showed in Gini score result.\ 
 \
-2) Optimize variables in model. We will re-evaluate the model and its independent variables to see which one should be removed. The causal inferential and DAG theory are borrowed in this process, even though this is a cross-sectional study and we do not specify the exposure. But we treat the all selected variables in original GLM model as a bundle of exposure, then evaluate whether the demographic variables with statistical significant among yes and no groups in table 1 should be included. The criteria for this decision step is that whether this variable plays the role like potential confunding. Similarily, the excluded rule for this step is that if the selected variable is more like Effect Measure Modification (EMM), we will remove it from the model. \
+
+**Step 6: Optimize GLM model**
+1) Optimize variables in model. We will re-evaluate the model and its independent variables to see which one should be removed. The causal inferential and DAG theory are borrowed in this process, even though this is a cross-sectional study and we do not specify the exposure. But we treat the all selected variables in original GLM model as a bundle of exposure, then evaluate whether the demographic variables with statistical significant among yes and no groups in table 1 should be included. The criteria for this decision step is that whether this variable plays the role like potential confunding. Similarily, the excluded rule for this step is that if the selected variable is more like Effect Measure Modification (EMM), we will remove it from the model. \
 \
-3) Generate the results. The final model after optimized its dependent variables will be presented in Table 2. \
+2) Generate the results. The final model after optimized its dependent variables will be presented in Table 2. \
 \
-4) Compare the model performance. The last step in this section is evaluation and comparision the original GLM model and optimized GLM model.We re-rum the K-cross validation (k=10),  ROC curves as well as AUC to explore whether after optimization, it helps to improve the performance of the predictive model. \
+3) Compare the model performance. The last step in this section is evaluation and comparision the original GLM model and optimized GLM model.We re-rum the K-cross validation (k=10),  ROC curves as well as AUC to explore whether after optimization, it helps to improve the performance of the predictive model. \
 \
+The flow chart about the method is presented as follow: \
+
+![Figure 1. Flowchart of research method](/Users/weilus-adm/Desktop/BMIN5030/4_Final_project/BMI5030_FP_Song/method.png)
+
+
 
 #### 1. Data preparation
 ```{r message=F, warning=F}
@@ -61,8 +69,8 @@ pacman::p_load(rio,here,skimr,tidyverse,dplyr,haven,codebook,knitr,BiocManager,r
 library(devtools)
 install_github("vqv/ggbiplot")
 ```
-
-#####  Data loading and cleaning
+\
+##### 1-1 Data loading and cleaning
 ```{r message=F, warning=F}
 #rm(list=ls())
 # Retreive baseline data from cohort study
@@ -106,7 +114,7 @@ ggplot(fdat, aes(factor(agree_prep), fill= factor(agree_prep)))+
 As we can see from the bar plot, in this dataset, the outcome for this research is extremly unbalnced. The participants who would like to take PrEP are 1108, whereas only 24 participants chose No. That will introduce the nagtive influences to the machine learning in next step. \
 
 \
-#### Map viz 
+#### 2-1. Map viz 
 From this section, we would like to use map tool to visualize the dataset to see the locations of this study sampled given the age and gross income background.\
 
 ```{r message=FALSE, warning=FALSE}
@@ -180,7 +188,7 @@ plot_grid(p1,p2, labels="AUTO")
 From the map plots, we can see one geographic location is out of Kenya, which should be suspected as outlier and need to check with data provider, and most sampled households are in southern of Kenya. When eyeball these two plot, it looks like all samples are randomly across the Kenya, in other words, there is no obvious sign that all sampled participants are from rich area or poverty area, neither the age.\
 \
 
-##### Single demographic variables visualization
+##### 2-2. Single demographic variables visualization
 In addition to map the study, we also want to visualize the relationship between all demographic variables and outcome variable: agree_prep. \
 
 ```{r message=FALSE, warning=FALSE}
@@ -247,10 +255,10 @@ pf<-ggplot(dfmap2)+
   theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1))
 plot_grid(pc,pd,pe,pf, labels="AUTO")
 ```
-From the plots, we can tell the distribution for each demographic variable between "Yes" and "No"group. However, we need to more specific information to see whether those varied distributions/frequencies have significant different given a=0.05.To get that table we use gtsummary to generate table 1 in next step. \
+From the plots, we can tell the distribution for each demographic variable between "Yes" and "No"group. However, we need to more specific information to see whether those varied distributions/frequencies have significant different given $\alpha$=0.05.To get that table we use gtsummary to generate table 1 in next step. \
 \
 
-##### Table 1: Demographic description of study
+##### 2-3. Create Table 1: Demographic description of study
 
 ```{r}
 library(gtsummary)
@@ -273,13 +281,15 @@ dfmap%>%
   bold_labels()
 
 ```
+\
 Based on the table 1, we can see most of demographic variables are not significantly different among two groups (Agree to take PrEP v.s Not agree to take PrEP). The significant different might be resulted by imbalanced participants in two groups.\
 \
 
 #### 3.Using Machine learning method to explore variables 
-Because the dataset (fdat) has over 100 variables. It is impossible to manually find significant associated variable to outcome.Since the outcome is binary, we will use GLM model to detect all significant associated variables to outcome given the a=0.05 level. \
+Because the dataset (fdat) has over 100 variables. It is impossible to manually find significant associated variable to outcome.Since the outcome is binary, we will use GLM model to detect all significant associated variables to outcome given the $\alpha$=0.05 level. \
 \
-##### Select significant associated variables by using GLM
+
+##### 3-1. Select significant associated variables by using GLM
 ```{r message=F, warning=F}
 # Finding a significant associated variables by using glm model.
 datsig<-fdat%>%
@@ -297,7 +307,7 @@ datsig<-fdat%>%
 
 The table lists all significant associated variables to outcome. However, we also want to know whether the other machine learning algorithms perform better than GLM. If so, we can choose the other method to predict the outcome. Here, we also used Random Forest tree and SVM as comparison. \
 
-#### Replicate the selecting process by another ML models: Random forest tree and SVM.
+#### 3-2. Replicate the selecting process by another ML models: Random forest tree and SVM.
 ```{r message=F, warning=F}
 # Random forest tree: Top 10 dfgini
 library(randomForest)
@@ -319,7 +329,7 @@ Given the results from RF and SVM, we can see that RF performs better than SVM s
 \
 Hence, we only use Gini score from RF to compare with GLM, which use the table to list all variables/predictors which are significant associated with outcome. \
 
-#### Create the significant associated variable list based on RF and GLM model 
+#### 3-3. Create the significant associated variable list based on Random foreast and GLM model 
 
 ```{r message=F, warning=F}
 # Present the two selected results:
@@ -331,7 +341,8 @@ kbl(cbind(dfgini, datsig),caption="Comparison of two top-ranked varaibles", digi
 The next step is visualizing the performance for each model we introduced before. We use K-cross validation (K=10) to see whether the assumption we decide before is correct based on ROC curve and AUC.Then, we will pick up the best performance model and some variables/predictors from the table we created before to construct our final model. \
 \
 
-##### Using Machine learning method to evaluate model's performance and select a model
+#### 4. Model selection and evaluation
+##### 4-1 Using Machine learning method to evaluate model's performance and select a model
 ```{r message=F, warning=F}
 N = nrow(fdat)
 K = 10
@@ -377,7 +388,7 @@ The result shows that our two assumptions before are correct. First, the extreme
 
 \
 
-##### Create first GlM Model based on top 6 significant variables which are also overlapped in RF result 
+##### 4-2. Create original GlM Model based on top 6 significant variables which are also overlapped in RF result 
 ```{r message=F, warning=F}
 glmfdat<-glm(agree_prep~identity_group_msm+service_received_msm_hiv+service_received_msm_risk+risk_low_known+risk_low_condoms+risk_low_never, data =fdat, family = binomial())
 s<-summary(glmfdat)
@@ -391,7 +402,7 @@ z<-as.data.frame(round(z,3))%>%
 ```
 \
 
-##### Optimize predictive model
+##### 4-3. Optimize predictive model
 Because we already know the extreme unbalanced number in variable/predictor will cause unreliable statistic result. We will re-evaluate the all included variables/predictors, meanwhile, will use DAG theory to see whether demographic variables should be added to increase the performance of predictive model.\
 
 According to the Gini score result, we see several variables that are related to decline_xxx has significant association with outcome. But all those variables have extreme unbalanced outcome numbers,for example, when we examine the top 1 variable: decline_adhere, the number of checked variable are only 9 out of 1132. If we introduce those variable in the model, it will increase the unreliability. So we adhere to the GLM models result and make sure those variables also appear in Gini score result.\
@@ -425,7 +436,7 @@ So, our final selected predictive variables are: \
 **Outcome/dependent variable** is: agree_prep.\
 
 \
-##### Create second model after being optimized by DAG
+##### 4-4. Create optimized GLM model
 ```{r message=F, warning=F}
   glmfdat2<-glm(agree_prep~service_received_msm_hiv+service_received_msm_risk+risk_low_known+risk_low_condoms+risk_low_never+risk_low_never+service_received_msm_peer+agegrp, data =fdat, family = binomial())
   s2<-summary( glmfdat2)
@@ -438,7 +449,7 @@ So, our final selected predictive variables are: \
 
 ```
 
-##### Table 2: Statistics of optimized model
+##### 4-5. Create the Table 2: Statistics of optimized GLM model
 ```{r}
 glmfdat2%>%
   tbl_regression(exponentiate=T, 
@@ -460,7 +471,7 @@ glmfdat2%>%
 The result shows that most of variables have statistical significant association to outcome.Those variables can also be used as a good predictors to predict whether the target population are willing to take PrEP or not. Even though we can see strong magnitude for certain variables such as var: Never had sex (OR=18.1), we also notice that the 95% CI is extremely wide, some of them also across the 1, which indicates the statistical result is not precise. This is expected output given the fact that extreme unbalanced number of outcome aforementioned. \
 
 \
-#### Compare two models'performance
+#### 4-6. Compare two models'performance
 The last step for this project is reviewing the performance of the optimized model. By comparing to original model, which was only selected the top 6 variables (overlapped with Gini Score result) from GLM result, we use ROC curve and AUC value to see whehter the optimized model improve the rationality and predictive precision. \
 
 ```{r message=F, warning=F}
@@ -500,7 +511,7 @@ From the plot, we can see that the optimized the model increases the precision o
 
 \
 
-##### Results 
+### Results 
 Describe your results and include relevant tables, plots, and code/comments used to obtain them. End with a brief conclusion of your findings related to the question you set out to address. You can include references if you'd like, but this is not required.\
 There are couple of finding based on the this research:\
 \
@@ -521,7 +532,7 @@ The study compared SVM, Randome forest tree and GLM for the predictive performan
 The GLM and top 6 significant predictors are used as original predictive model, the AUC value and ROC result shows it only has relative good performance (AUC is about 78.2%). After we introduced the DAG theory to the model optimization, we removed some variables which are suspected as EMM and added some demographic variables. The final GLM model shows that this process improves the model's performance and promote rationality, comparing the original GLM model, the AUC value is increased to 82.4%. \
 \ 
 
-##### Discussion
+### Discussion
 
 1) **Unbalanced number of outcome** \
 Given the fact that this project used the imbalanced data, it proves that machine learning models usually cannot perfectly handle that. Specifically. Then imblalanced dataset here means that a classification data set with skewed class proportions. According to the previous study, machine learning models will encounter a problem for such type of dataset because when it trains on unbalanced datasets, it often have poor results when they have to generalize (predict a class or classify unseen observations). Moreover, some models will be more susceptible to unbalanced data than others despite of the chosen algorithm.[1] This has been proved in this project as we found in model selection section. To make this result more meaningful in practice, further some advanced methods such as random oversampling should be introduced to fix it.[2] \
@@ -530,7 +541,7 @@ Given the fact that this project used the imbalanced data, it proves that machin
 This study used the completed cases to implement the analysis, which may casue biases since the missing value is highly not lost randomly. In practice, we should consider to adopt the imputation package in R to fix the missing value issue if the missing proportion is under the certain percentage, say less than 30%. Morever, it implies the importance for researchers about the quality of dataset when they design and collect the dataset.[3][4] \
 
 
-##### Reference
+### Reference
 [1] Cieslak, D. A., & Chawla, N. V. (2008, September). Learning decision trees for unbalanced data. In Joint European Conference on Machine Learning and Knowledge Discovery in Databases (pp. 241-256). Springer, Berlin, Heidelberg. \
 [2] Viloria, A., Lezama, O. B. P., & Mercado-Caruzo, N. (2020). Unbalanced data processing using oversampling: Machine learning. Procedia Computer Science, 175, 108-113. \
 [3]Gorelick, M. H. (2006). Bias arising from missing data in predictive models. Journal of clinical epidemiology, 59(10), 1115-1123.\
