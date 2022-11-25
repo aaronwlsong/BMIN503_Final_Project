@@ -19,23 +19,38 @@ DUE DATE FOR FINAL VERSION: 12/09/22 11:59PM. This is a hard deadline. Turn in w
 [forking]: https://guides.github.com/activities/forking/
 
 ------------------------------------------------------------------------------------Below is the information about this research--------------------------------------------------------------------------------------------
-NOTE: This project is in process, most of work is still undergoing.....
 
-Title for the research: Exploration of significant predictor for decision of taking PrEP among high risk population based on machine learning and casual inference method
+This is BMIN503/EPID600 Final Project made by Weilu Song.
+
+Title: Exploration of significant predictors for decision of taking PrEP among high risk population based on machine learning algorithm
 
 Introduction: 
 
-To better control HIV infection among high risk population, it urgently needs to explore the relationship between related determinants that may affect Pre-Exposure Prophylaxis (PrEP) usage. Jilinde PrEP cohort study was conducted in Kenya, it contains over 1000 participants and over 300 variables that related to PrEP usage among high risk population. In this project, curated dataset is used to analyze the potential PrEP predictors that may impact the PrEP usage among targeted population.  
+Pre-Exposure Prophylaxis (PrEP) has been proven an effective way to prevent HIV infection.However, the PrEP coverage among high risk population is still low. The reason behind it is complex, because making a decision of taking PrEP is determined by multiple factors. When conduct and collect the dataset, the researchers always try to capture as much participant's characteristic as possible. Therefore, it leads a results that a typical epidemiological dataset contains hundreds of variables. Therefore, it is needed to integrate the machine learning method to identify the significant variables and further optimize the model based on the selected variables. 
 
-Aim and significance: We expect to through this research, it can provide practical references for HIV prevention through PrEP in local area, moreover, present a plausible way to optimize model by integrating causal inferential theory to machine learning model.   
+Hypothesis: 
 	Primary aim: Exploring significant predictors for outcome: Decision of taking PrEP. 
-	The secondary aim: Compare different machine learning models' effective given the unbalanced outcome. 
+	The secondary aim: Compare different machine learning model's  given an imbalanced dataset. 
 
-Method: Cleaned the dataset by using baseline and completed case to carry on analysis. The barplot is used to check outcome variable, the GLM, random forest tree and SVM are used as predicted models. ROC curve is used to evaluate the model's performance. The Gini score and p-value are used to create most significant predictors list for further GLM model comparison. Then, the two GLM models: One is that contain top 6 significant predictors from the GLM result meanwhile overlapped with RF result, another GLM model contains the adjusted predictors which applied casual inferential theory on it.  
+Significance: 
+           We expect that the research can provide practical references for HIV prevention by using PrEP in Kenya. In addition, present a plausible way to optimize model based on machine learning model. 
 
-Result: The GLM model with variables that are adjusted based on causal inferential theory shows the better performance to predict the outcome. The result shows that the people who have had sex shows the most intention to take PrEP, which imply the intervention and advertising direction among the high risk population when it comes to the uptake PrEP.
+Method: 
+     A Curated, completed dataset is used in this project. To achieve our aim, there are mainly 6 steps for analysis: 
+     Step 1: Outcome variable inspection;
+     Step 2: Demographic variable inspection;
+     Step 3: Variable selection;
+     Step 4: Model evaluation;
+     Step 5: Create original GLM model; 
+     Step 6: Optimize GLM model. 
+     
+Result: 
+    1) Main result: 4 variables out of 6 have statistical significant association with outcome. They could be considered as predictors for decision of taking PrEP. 
+    2) Variable selection: Toal 18 significant associated variables/predictors are selected by GLM model given the a=0.05 level. The outcome inspection result shows that the dependent variable has 	    extreme unbalanced outcomes (24 v.s 1108) which severely affects the model's performance. 
+    3)Model selection and evaluation: GLM has the best performance for this extreme unbalanced number outcome compared to SVM and Random forest tree. 
 
-Limitation: Unbalanced outcome affect the performance and accuracy when run different ML models.
-                  Using completed dataset will introduce the bias since the missing value is not completed random. 
+Limitation: 
+     1) Imbalanced outcome affect the performance and accuracy when run different ML models.
+     2) Using completed dataset will introduce the bias since the missing value is not completely random. 
                   
                   
