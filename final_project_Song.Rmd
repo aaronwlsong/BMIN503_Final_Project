@@ -329,7 +329,7 @@ Given the results from RF and SVM, we can see that RF performs better than SVM s
 \
 Hence, we only use Gini score from RF to compare with GLM, which use the table to list all variables/predictors which are significant associated with outcome. \
 
-#### 3-3. Create the significant associated variable list based on Random foreast and GLM model 
+#### 3-3. Create the significant associated variable list based on Random forest and GLM model 
 
 ```{r message=F, warning=F}
 # Present the two selected results:
@@ -381,7 +381,7 @@ library(pROC)
 plot.roc(obs.outputs, pred.outputs.svm, percent = TRUE,  print.auc= TRUE, print.auc.y = 30,ci = TRUE, col = "blue")
 plot.roc(obs.outputs, pred.outputs.rf, percent = TRUE,  print.auc= TRUE, print.auc.y = 40,ci = TRUE, col = "darkgreen", add = TRUE)
 plot.roc(obs.outputs, pred.outputs.glm, percent = TRUE,  print.auc= TRUE,print.auc.y = 50,ci = TRUE, col = "red", add = TRUE)
-legend("bottomright", legend = c("SVM", "Random foreast tree","GLM"), col = c("blue", "darkgreen","red"), lwd = 2, cex=.7)
+legend("bottomright", legend = c("SVM", "Random forest tree","GLM"), col = c("blue", "darkgreen","red"), lwd = 2, cex=.7)
 ```
 \
 The result shows that our two assumptions before are correct. First, the extreme unbalanced binary outcome leads to very unsatisfied predicted performance for each model.(None of them has AUC over 80%). Second, consistent with the outputs showed above, among the three models, the SVM has the worst predicted performance.\
@@ -516,7 +516,7 @@ Describe your results and include relevant tables, plots, and code/comments used
 There are couple of finding based on the this research:\
 \
 1)**Main result** \
-The result shows that in optimized model, 4 variables out of 6 have statistical significant association with outcome. They are:   Whether received MSM risk education service(service_received_msm_risk, p-value=0.038, OR=13.5), I consistently use condoms(risk_low_condoms, p-value=0.001, OR=7.15),Never had sex(risk_low_never, p-value=0.013, OR=18.1) and Age group (agegrp, P-value=0.016, OR=0.18).\
+The result shows that in optimized model, 4 variables out of 6 have statistical significant association with outcome. They are:Whether received MSM risk education service(service_received_msm_risk, p-value=0.038, OR=13.5), I consistently use condoms(risk_low_condoms, p-value=0.001, OR=7.15),Never had sex(risk_low_never, p-value=0.013, OR=18.1) and Age group (agegrp, P-value=0.016, OR=0.18).\
 
 To interpret this result, we can say that the people who are MSM and have not received the risk education show stronger willingness to take PrEP, this result is inconsistent with previous finding, the further research should be carried to explore the reason. Other than that, the people who are older, have had sex before, and who do not consistently use condom are more likely to consider taking PrEP. Those findings are consistent with previous studies.\
 
@@ -527,7 +527,7 @@ The Jilinde study has total 4115 obs. and 367 variables. After data cleaning, th
 The outcome inspection result shows that the dependent variable has extreme unbalanced outcomes (24 v.s 1108).This severely affects the model's performance. \
 \
 3) **Model selection and evaluation** \
-The study compared SVM, Randome forest tree and GLM for the predictive performance. The result shows that GLM has the best performance for this extreme unbalanced number outcome. The worst perfomrance is SVM model, which can not correctly predict for small number of outcome (correctness is zero). \
+The study compared SVM, Random forest tree and GLM for the predictive performance.The result shows that GLM has the best performance for this extreme unbalanced number outcome. The worst performance is SVM model, which can not correctly predict for small number of outcome (correctness is zero). \
 
 The GLM and top 6 significant predictors are used as original predictive model, the AUC value and ROC result shows it only has relative good performance (AUC is about 78.2%). After we introduced the DAG theory to the model optimization, we removed some variables which are suspected as EMM and added some demographic variables. The final GLM model shows that this process improves the model's performance and promote rationality, comparing the original GLM model, the AUC value is increased to 82.4%. \
 \ 
