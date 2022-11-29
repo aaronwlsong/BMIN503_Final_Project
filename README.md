@@ -18,7 +18,7 @@ DUE DATE FOR FINAL VERSION: 12/09/22 11:59PM. This is a hard deadline. Turn in w
 <!-- Links -->
 [forking]: https://guides.github.com/activities/forking/
 
-------------------------------------------------------------------------------------Below is the information about this research--------------------------------------------------------------------------------------------
+------------Below is the information about this project----------------------------------
 
 This is BMIN503/EPID600 Final Project made by Weilu Song.
 
@@ -27,9 +27,9 @@ The folder contains 5 files, they are:
 2) Final_project_Song.html. This file contains the whole contents of project including introduction, method, result and discussion. 
 3) method pic. This .png file is used to show the method flow, it is kept as a separated picture in the same path/folder with .Rmd file and used in .Rmd file. 
 4) Jilide_coh_2022aug.csv. This is original dataset that was used in this project.
-5) README.txt. This is readme file which contains the same content as here but is saved as independent .txt file. 
+5) README.md. This is a readme file which contains the list of files and their brief information as well as a gist of research. 
 
-Below is the gist of this project. 
+--------------------Below is the gist of this research--------------------------------------------- 
 
 Title: Exploration of significant predictors for decision of taking PrEP among high risk population based on machine learning algorithm
 
