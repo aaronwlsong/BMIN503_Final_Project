@@ -1,5 +1,5 @@
 ---
-title: "BMIN503/EPID600 Project: Exploring significant predictors for decision of taking PrEP among high-risk population"
+title: "Exploring significant predictors for decision of taking PrEP among high-risk population"
 author: "Weilu Song"
 output: 
   html_document:
@@ -9,8 +9,6 @@ output:
 
 
 ***
-Use this template to complete your project throughout the course. Your Final Project presentation will be based on the contents of this document. Replace the title/name above and text below with your own, but keep the headers. Feel free to change the theme and other display settings, but this is not required.
-
 ### Overview
 To better control HIV infection among high risk population, it urgently needs to explore the relationship between related determinants that may affect Pre-Exposure Prophylaxis (PrEP) usage. Jilinde PrEP cohort study was conducted in Kenya, it contains over 1000 participants and over 300 variables that related to PrEP usage among high risk population. In this project, curated dataset is used to analyze the potential PrEP predictors that may impact the PrEP usage among targeted population.\
 
@@ -614,8 +612,8 @@ From the plot, we can see that the optimized the model increases the precision o
 \
 
 ### Results 
-Describe your results and include relevant tables, plots, and code/comments used to obtain them. End with a brief conclusion of your findings related to the question you set out to address. You can include references if you'd like, but this is not required.\
-There are couple of finding based on the this research:\
+\
+There are couple of findings based on the this research:\
 \
 1)**Main result** \
 The result shows that in optimized model, 4 variables out of 6 have statistical significant association with outcome. They are:Whether received MSM risk education service(service_received_msm_risk, p-value<0.001, OR=12.6), I consistently use condoms(risk_low_condoms, p-value<0.001, OR=6.15),Never had sex(risk_low_never, p-value=0.014, OR=17.5) and Age group (agegrp, P-value=0.026, OR=0.23).\
