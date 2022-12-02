@@ -20,11 +20,11 @@ The original files of this final project can be accessed from here: [Final proje
  
 
 ### Introduction 
-Pre-Exposure Prophylaxis (PrEP) has been proven an effective way to prevent HIV infection.However, the PrEP coverage among high risk population is still low. The reason behind it is complex, because making a decision of taking PrEP is determined by multiple factors such as social determinants, self-perception, and clinical history. To better curb HIV infection among high risk people, it is urgent to identify the key factors that may affect the decision of taking PrEP. Becasue that will tremendously helps both researcher and local policy makers to advocate PrEP as a main HIV prevention strategy in Kenya.\
+Pre-Exposure Prophylaxis (PrEP) has been proven an effective way to prevent HIV infection.[1] However, the PrEP coverage among high risk population is still low.[2] The reason behind it is complex, because making a decision of taking PrEP is determined by multiple factors such as social determinants, self-perception, and clinical history. To better curb HIV infection among high risk people, it is urgent to identify the key factors that may affect the decision of taking PrEP. Because that will tremendously helps both researcher and local policy makers to advocate PrEP as a main HIV prevention strategy in Kenya.\
 \
-As aforementioned, because the factors that may influence the decision of taking PrEP are interdisciplinary, when conduct and collect the dataset, the researchers always try to capture as much participant's characteristic as possible. Therefore, it leads a results that a typical epidemiological dataset contains over 100 or sometimes couple hundreds variables and some of those variables are highly collinearity. As a well known secret, a precise result is highly depended on model and variable selection, once the outcome is settled, the main challenges for researchers are how to find the significant associated predictors related to outcome and establish the best predictive model to answer the hypothesis they posed.\
+As aforementioned, because the factors that may influence the decision of taking PrEP are interdisciplinary, when conduct and collect the dataset, the researchers always try to capture as much participant's characteristic as possible. Therefore, it leads a results that a typical epidemiological dataset contains over 100 or sometimes couple hundreds variables and some of those variables are highly collinearity.As a well known secret, a precise result is highly depended on model and variable selection, once the outcome is settled, the main challenges for researchers are how to find the significant associated predictors related to outcome and establish the best predictive model to answer the hypothesis they posed.\
 \
-In recent decade, machine learning method has been widely appided in more and more field, it also shapes the way how to establish a predictive model in the field of public health. Compared to the traditional way which the variables/predictors were selected by heavily relying on the researcher's background knowledge and literature review, using the best fitted model, it not only helps researchers to quickly pick up the most significant associated variables among the hundreds variables, but also enables them to optimize the model based on the result to eventually get a satisfied predictive result. \
+In recent decade, machine learning method has been widely applied in more and more field, it also shapes the way how to establish a predictive model in the field of public health.[3] Compared to the traditional way which the variables/predictors were selected by heavily relying on the researcher's background knowledge and literature review, using the best fitted model, it not only helps researchers to quickly pick up the most significant associated variables among the hundreds variables, but also enables them to optimize the model based on the result to eventually get a satisfied predictive result.[4][5] \
 \
 In this study, we use this JILINDE cohort study, but only the baseline completed dataset to explore the significant predictor for decision of taking PrEP, by applying the dataset into multiple supervised machine learning models to find the most significant predictor, from there, the research also demonstrate how to applied causal inferential theory on the selected variables and model to further optimize it to maximize its AUC value. We expect to through this research, it can provide practical references for HIV prevention through PrEP in local area, moreover, present a plausible way to optimize model by integrating causal inferential theory to machine learning model. \ 
 \
@@ -437,7 +437,7 @@ z<-as.data.frame(round(z,3))%>%
 
 Because we already know the extreme imbalanced dataset can cause unreliable statistic result. We will re-evaluate the all included variables/predictors, the goal in this process is that we want to improve the performance given the current model. It is a subjective process, which needs to do three things: One is re-consider the top variables generated by Gini score (Table 2), to see whether we should include them into model; Second, we will calculate the collinerity among the current selected variables; The third step is borrowing concept of DAG theory to see whether demographic variables should be added to increase the performance of predictive model.\
 
-1). **Re-consider top variables generated by gini score*.** \
+1). **Re-consider top variables generated by gini score.** \
 
 According to the Gini score result, we see several variables that have prefix of "decline" have significant association with outcome. But we can tell that the common characteristic of these top predictors generated by RF is that all of them have extreme imbalanced outcome number:  the number for "yes" is less 10. For example, the top 1 variable: decline_adhere, the number of "yes" is only 9 out of 1123. \
 
@@ -461,7 +461,7 @@ table(fdat$risk_low_condoms)#Top 6 in GLM
 
 ```
 \
-2). **Using DAG conception to add demographic variables*.** \
+2). **Using DAG conception to add demographic variables.** \
 According to the table 1 result, we found that only sex and age group (agegrp) have a statistical significant among different groups. So we introduce DAG conception to see which one or whether both of them should be included in to the model if these variables affect both predictors and outcome. \
 ```{r}
 library(dagitty)
@@ -479,6 +479,8 @@ g <- dagitty('dag {
 }')
 plot(g)
 ```
+\
+
 According to the DAG, we can see that agegroup should be included into the model becasue it affects both current selected vars and outcome given the background knowledge. However, even though the sex shows statistical different in table 1, we do not need to include it becasue the sex may affect all current selected variables, however, it does not affect the outcome (decision of taking PrEP). In other words, there is no evidence that the women has siginifcant willingness to take PrEP compared to men or vice versa. \
 
 3). **Collinearity checking before and after optimize model** \
@@ -486,10 +488,13 @@ According to the DAG, we can see that agegroup should be included into the model
 ```{r}
 glmfdat2<-glm(agree_prep~ service_received_msm_risk+risk_low_known+risk_low_condoms+risk_low_never+agegrp, data =fdat, family = binomial())
 a<-car::vif(glmfdat)
-kableExtra::kable (a, caption="VIF for variables in original GLM model", digits = 3)%>%
-    kableExtra::kable_classic(full_width=F, html_font = "Cambria")
+kableExtra::kable (a, caption="Table 5. VIF for variables in original GLM model", digits = 3)%>%
+     column_spec(2, bold = T) %>%
+     row_spec(1:4, bold = T, color = "black", background = "#d78d1e")%>%
+     kableExtra::kable_classic(full_width=F, html_font = "Cambria")
 b<-car::vif(glmfdat2)
-kableExtra::kable (b,caption="VIF for variables in optimized GLM model", digits = 3)%>%
+kableExtra::kable (b,caption="Table 6. VIF for variables in optimized GLM model", digits = 3)%>%
+    column_spec(2, bold = T, color = "black", background = "#afd71e")%>%
     kableExtra::kable_classic(full_width=F, html_font = "Cambria")
 ```
 \
@@ -500,14 +505,13 @@ After adjusted, we can see the variables VIF decrease to under 2.This implies th
 So, our final selected predictive variables are: \
 
 |**Variables in original GLM**|**Variables in optimized GLM**|**Outcome/dependent variable**| 
-|:--:|:---:|:---:|
+|:---|:---|:---|
 |service_received_msm_hiv | |agree_prep|
-|service_received_msm_risk |service_received_msm_risk| |
-|risk_low_known|risk_low_known| |
-|risk_low_condoms|risk_low_condoms| |
-|risk_low_never|risk_low_never| |
-|identity_group_msm| | |
-| |agegrp| |
+|service_received_msm_risk |service_received_msm_risk|agree_prep |
+|risk_low_known|risk_low_known|agree_prep |
+|risk_low_condoms|risk_low_condoms|agree_prep |
+|risk_low_never|risk_low_never|agree_prep |
+|identity_group_msm|agegrp |agree_prep |
 
 \
 
@@ -519,31 +523,56 @@ So, our final selected predictive variables are: \
   z2<-exp(coef(glm(agree_prep~service_received_msm_risk+risk_low_known+risk_low_condoms+risk_low_never+agegrp, data=fdat, family = binomial()))) 
   z2<-as.data.frame(round(z2,3))%>%
   dplyr::select(Exp_coeff="round(z2, 3)")
-  kableExtra::kbl(cbind(sdf2,z2), caption="", digits = 3)%>%
+  kableExtra::kbl(cbind(sdf2,z2), caption="Table 7. Summary of optimized GLM model", digits = 3)%>%
     kableExtra::kable_classic(full_width=F, html_font = "Cambria")
 ```
 
-##### 4-5. Create the Table 2: Statistics of optimized GLM model
-```{r}
+##### 4-5. Create the summary Table for optimized GLM model
+```{r message=F, warning=F}
 glmfdat2%>%
   tbl_regression(exponentiate=T, 
                  label=list(service_received_msm_risk="Whether received MSM risk education service",
                             risk_low_known="Have known HIV status of all sex partner(s)",
-                            risk_low_condoms="I consistently use condoms",risk_low_never~"Never had sex",
-                            service_received_msm_peer="Whether support by peer groups",
+                            risk_low_condoms="I consistently use condoms",
+                            risk_low_never~"Never had sex",
                             agegrp="Age group"))%>%
   modify_table_body(~.x %>% 
       mutate(label  = ifelse(label == "Checked", "Yes",
                              ifelse(label =="Unchecked", "No",label))))%>%
   bold_p()%>%
   modify_header(label ~ "**Variable**")%>%
-  modify_caption("**Table 2. Statistics of optimized model**") %>%
+  modify_caption("**Table 8. Statistics of optimized model**") %>%
   italicize_labels()%>%
   bold_labels()
 ```
-The result shows that most of variables have statistical significant association to outcome.Those variables can also be used as a good predictors to predict whether the target population are willing to take PrEP or not. Even though we can see strong magnitude for certain variables such as var: Never had sex (OR=18.1), we also notice that the 95% CI is extremely wide, some of them also across the 1, which indicates the statistical result is not precise. This is expected output given the fact that extreme unbalanced number of outcome aforementioned. \
-
 \
+The result shows that most of variables have statistical significant association to outcome.Those variables can also be used as a good predictors to predict whether the target population are willing to take PrEP or not. Even though we can see strong magnitude for certain variables such as var: Never had sex (OR=18.1), we also notice that the 95% CI is extremely wide, some of them also across the 1, which indicates the statistical result is not precise. This is expected output given the fact that extreme unbalanced number of outcome aforementioned. \
+\
+
+```{r}
+#create visulaized coef table for optimized GLM model
+coef_table <- data.frame(
+  Variables = c("Whether received MSM risk education service (ref=yes)", "I consistently use condoms (ref=yes)", "Never had sex (ref=yes)", "Age group (ref=Adult)"),
+  Coefficients = c(12.6, 6.15, 17.5,0.23),
+  Conf.Lower = c(3.96, 2.11, 0.85,0.05),
+  Conf.Higher = c(36.4, 16.5, 131,0.73)
+) 
+
+data.frame(
+  Variable = coef_table$Variables,
+  Visualization = ""
+) %>%
+  kableExtra::kbl(booktabs = T, caption="Figure 2. Coefficient for siginificant predictors from optimized GLM model")%>%
+  kableExtra::kable_classic(full_width=F, html_font = "Cambria")%>%
+  column_spec(2, image = spec_pointrange(
+    x = coef_table$Coefficients, 
+    xmin = coef_table$Conf.Lower, 
+    xmax = coef_table$Conf.Higher, 
+    vline = 1)
+    )
+```
+\
+
 #### 4-6. Compare two models'performance
 The last step for this project is reviewing the performance of the optimized model. By comparing to original model, which was only selected the top 6 variables (overlapped with Gini Score result) from GLM result, we use ROC curve and AUC value to see whehter the optimized model improve the rationality and predictive precision. \
 
@@ -589,11 +618,11 @@ Describe your results and include relevant tables, plots, and code/comments used
 There are couple of finding based on the this research:\
 \
 1)**Main result** \
-The result shows that in optimized model, 4 variables out of 6 have statistical significant association with outcome. They are:Whether received MSM risk education service(service_received_msm_risk, p-value=0.038, OR=13.5), I consistently use condoms(risk_low_condoms, p-value=0.001, OR=7.15),Never had sex(risk_low_never, p-value=0.013, OR=18.1) and Age group (agegrp, P-value=0.016, OR=0.18).\
+The result shows that in optimized model, 4 variables out of 6 have statistical significant association with outcome. They are:Whether received MSM risk education service(service_received_msm_risk, p-value<0.001, OR=12.6), I consistently use condoms(risk_low_condoms, p-value<0.001, OR=6.15),Never had sex(risk_low_never, p-value=0.014, OR=17.5) and Age group (agegrp, P-value=0.026, OR=0.23).\
 
 To interpret this result, we can say that the people who are MSM and have not received the risk education show stronger willingness to take PrEP, this result is inconsistent with previous finding, the further research should be carried to explore the reason. Other than that, the people who are older, have had sex before, and who do not consistently use condom are more likely to consider taking PrEP. Those findings are consistent with previous studies.\
 
-The result also shows the practical meaning, that reveals the target population and key factors regard to PrEP usage in Kenya if the local government want to advocate it as the prevention for HIV. \
+The result also shows the practical meaning. It reveals the target population and key factors regard to PrEP usage in Kenya if the local government want to advocate it as the prevention for HIV. \
 \
 2) **Variable selection** \
 The Jilinde study has total 4115 obs. and 367 variables. After data cleaning, the final dataset downsized to 1132 observations and 106 variables. Among all of these variables, 19 variables are selected by GLM model as the significant predictors for outcome. And most of the variables are consistent with the result of Gini score result. In other words, they are overlapped with Random forest tree's result. \
@@ -602,20 +631,25 @@ The outcome inspection result shows that the dependent variable has extreme unba
 3) **Model selection and evaluation** \
 The study compared SVM, Random forest tree and GLM for the predictive performance.The result shows that GLM has the best performance for this extreme unbalanced number outcome. The worst performance is SVM model, which can not correctly predict for small number of outcome (correctness is zero). \
 
-The GLM and top 6 significant predictors are used as original predictive model, the AUC value and ROC result shows it only has relative good performance (AUC is about 78.2%). After we introduced the DAG theory to the model optimization, we removed some variables which are suspected as EMM and added some demographic variables. The final GLM model shows that this process improves the model's performance and promote rationality, comparing the original GLM model, the AUC value is increased to 82.4%. \
+The GLM and top 6 significant predictors are used as original predictive model, the AUC value and ROC result shows it only has relative good performance (AUC is about 76.0%). After we introduced the DAG theory to the model optimization, we removed some variables which are suspected as EMM and added some demographic variables. The final GLM model shows that this process improves the model's performance and promote rationality, comparing the original GLM model, the AUC value is increased to 82.6%. \
 \ 
 
 ### Discussion
 
 1) **Unbalanced number of outcome** \
-Given the fact that this project used the imbalanced data, it proves that machine learning models usually cannot perfectly handle that. Specifically. Then imblalanced dataset here means that a classification data set with skewed class proportions. According to the previous study, machine learning models will encounter a problem for such type of dataset because when it trains on unbalanced datasets, it often have poor results when they have to generalize (predict a class or classify unseen observations). Moreover, some models will be more susceptible to unbalanced data than others despite of the chosen algorithm.[1] This has been proved in this project as we found in model selection section. To make this result more meaningful in practice, further some advanced methods such as random oversampling should be introduced to fix it.[2] \
+Given the fact that this project used the imbalanced data, it proves that machine learning models usually cannot perfectly handle that. Specifically, imblalanced dataset here means that a classification data set with skewed class proportions. According to the previous study, machine learning models will encounter a problem for such type of dataset because when it trains on unbalanced datasets, it often have poor results when they have to generalize (predict a class or classify unseen observations). Moreover, some models will be more susceptible to unbalanced data than others despite of the chosen algorithm.[6] This has been proved in this project as we found in model selection section. To make this result more meaningful in practice, further some advanced methods such as random oversampling should be introduced to fix it.[7] \
 \
 2) **Completed case**\
-This study used the completed cases to implement the analysis, which may casue biases since the missing value is highly not lost randomly. In practice, we should consider to adopt the imputation package in R to fix the missing value issue if the missing proportion is under the certain percentage, say less than 30%. Morever, it implies the importance for researchers about the quality of dataset when they design and collect the dataset.[3][4] \
+This study used the completed cases to implement the analysis, which may cause biases since the missing value is highly not lost randomly. In practice, we should consider to adopt the imputation package in R to fix the missing value issue if the missing proportion is under the certain percentage, say less than 30%. Morever, it implies the importance for researchers about the quality of dataset when they design and collect the dataset.[8][9] \
 
 
 ### Reference
-[1] Cieslak, D. A., & Chawla, N. V. (2008, September). Learning decision trees for unbalanced data. In Joint European Conference on Machine Learning and Knowledge Discovery in Databases (pp. 241-256). Springer, Berlin, Heidelberg. \
-[2] Viloria, A., Lezama, O. B. P., & Mercado-Caruzo, N. (2020). Unbalanced data processing using oversampling: Machine learning. Procedia Computer Science, 175, 108-113. \
-[3]Gorelick, M. H. (2006). Bias arising from missing data in predictive models. Journal of clinical epidemiology, 59(10), 1115-1123.\
-[4]White, I. R., & Carlin, J. B. (2010). Bias and efficiency of multiple imputation compared with complete‐case analysis for missing covariate values. Statistics in medicine, 29(28), 2920-2931.\
+[1]Donnell, D., Baeten, J. M., Bumpus, N. N., Brantley, J., Bangsberg, D. R., Haberer, J. E., ... & Celum, C. (2014). HIV protective efficacy and correlates of tenofovir blood concentrations in a clinical trial of PrEP for HIV prevention. Journal of acquired immune deficiency syndromes (1999), 66(3), 340.\
+[2]Shrestha, R., & Copenhaver, M. (2018). Exploring the use of pre-exposure prophylaxis (PrEP) for HIV prevention among high-risk people who use drugs in treatment. Frontiers in public health, 6, 195.\
+[3]Mahesh, B. (2020). Machine learning algorithms-a review. International Journal of Science and Research (IJSR).[Internet], 9, 381-386.\
+[4]Singh, A., Thakur, N., & Sharma, A. (2016, March). A review of supervised machine learning algorithms. In 2016 3rd International Conference on Computing for Sustainable Global Development (INDIACom) (pp. 1310-1315). Ieee.\
+[5]Ayodele, T. O. (2010). Types of machine learning algorithms. New advances in machine learning, 3, 19-48.\
+[6] Cieslak, D. A., & Chawla, N. V. (2008, September). Learning decision trees for unbalanced data. In Joint European Conference on Machine Learning and Knowledge Discovery in Databases (pp. 241-256). Springer, Berlin, Heidelberg. \
+[7] Viloria, A., Lezama, O. B. P., & Mercado-Caruzo, N. (2020). Unbalanced data processing using oversampling: Machine learning. Procedia Computer Science, 175, 108-113. \
+[8]Gorelick, M. H. (2006). Bias arising from missing data in predictive models. Journal of clinical epidemiology, 59(10), 1115-1123.\
+[9]White, I. R., & Carlin, J. B. (2010). Bias and efficiency of multiple imputation compared with complete‐case analysis for missing covariate values. Statistics in medicine, 29(28), 2920-2931.\
