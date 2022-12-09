@@ -10,7 +10,7 @@ output:
 
 ***
 ### Overview
-To better control HIV infection among high risk population, it urgently needs to explore the relationship between related determinants that may affect Pre-Exposure Prophylaxis (PrEP) usage. Jilinde PrEP cohort study was conducted in Kenya, it contains over 1000 participants and over 300 variables that related to PrEP usage among high risk population. In this project, curated dataset is used to analyze the potential PrEP predictors that may impact the PrEP usage among targeted population.\
+To better control HIV infection among high risk population, it urgently needs to explore the relationship between related determinants that may affect Pre-Exposure Prophylaxis (PrEP) usage. Jilinde PrEP cohort study was conducted in Kenya, it contains over 1000 participants and 300 variables that are related to PrEP usage among high risk population. In this project, curated dataset is used to analyze the potential PrEP predictors that can be used as precidor for decision of taking PrEP among targeted population.\
 
 
 
@@ -18,17 +18,17 @@ The original files of this final project can be accessed from here: [Final proje
  
 
 ### Introduction 
-Pre-Exposure Prophylaxis (PrEP) has been proven an effective way to prevent HIV infection.[1] However, the PrEP coverage among high risk population is still low.[2] The reason behind it is complex, because making a decision of taking PrEP is determined by multiple factors such as social determinants, self-perception, and clinical history. To better curb HIV infection among high risk people, it is urgent to identify the key factors that may affect the decision of taking PrEP. Because that will tremendously helps both researcher and local policy makers to advocate PrEP as a main HIV prevention strategy in Kenya.\
+Pre-Exposure Prophylaxis (PrEP) has been proven an effective way to prevent HIV infection.[1] However, the PrEP coverage among high risk population is still low.[2] The reason behind it is complex, because making a behavioral decision such as initiate PrEP is determined by multiple factors such as social determinants, self-perception, and clinical history. To better curb HIV infection among high risk population, it is urgent to identify the key factors that may affect the decision of taking PrEP. Because that will tremendously helps both researcher and local policy makers to advocate PrEP as a main HIV prevention strategy in Kenya.\
 \
-As aforementioned, because the factors that may influence the decision of taking PrEP are interdisciplinary, when conduct and collect the dataset, the researchers always try to capture as much participant's characteristic as possible. Therefore, it leads a results that a typical epidemiological dataset contains over 100 or sometimes couple hundreds variables and some of those variables are highly collinearity.As a well known secret, a precise result is highly depended on model and variable selection, once the outcome is settled, the main challenges for researchers are how to find the significant associated predictors related to outcome and establish the best predictive model to answer the hypothesis they posed.\
+As aforementioned, because the factors that may influence the decision of taking PrEP are interdisciplinary, when conduct and collect the dataset, the researchers always try to capture as many participant's characteristics as possible. Therefore, it leads a fact that a typical epidemiological dataset usually contains over 100 or sometimes couple hundreds variables. Sometimes, those variables are highly collinearity.As it is proved by previous studies, a precise predictive result is highly depended on model and variable selection, which means that once the outcome is settled, the main challenges for researchers are how to find the significant associated predictors related to outcome and establish the best predictive model to answer the hypothesis they posed.\
 \
-In recent decade, machine learning method has been widely applied in more and more field, it also shapes the way how to establish a predictive model in the field of public health.[3] Compared to the traditional way which the variables/predictors were selected by heavily relying on the researcher's background knowledge and literature review, using the best fitted model, it not only helps researchers to quickly pick up the most significant associated variables among the hundreds variables, but also enables them to optimize the model based on the result to eventually get a satisfied predictive result.[4][5] \
+In recent decade, machine learning method has been widely applied in more and more fields, it also shapes the way how to establish a predictive model in the field of public health.[3] Compared to the traditional way which the variables/predictors selection was heavily relied on the researcher's background knowledge and literature review, and then pick up the appropriated variables from dataset for model they use, using machine learning algorithm not only helps researchers to quickly pick up the most significant associated variables among the hundreds variables, but also enables them to optimize the model based on the rough result, and optimize the model till it is satisfied.[4][5] \
 \
-In this study, we use this JILINDE cohort study, but only the baseline completed dataset to explore the significant predictor for decision of taking PrEP, by applying the dataset into multiple supervised machine learning models to find the most significant predictor, from there, the research also demonstrate how to applied causal inferential theory on the selected variables and model to further optimize it to maximize its AUC value. We expect to through this research, it can provide practical references for HIV prevention through PrEP in local area, moreover, present a plausible way to optimize model by integrating causal inferential theory to machine learning model. \ 
+In this study, we use this JILINDE cohort study, but only the baseline completed dataset to explore the significant predictor for decision of taking PrEP. By applying the dataset into multiple supervised machine learning models, we expect to compare and evaluate the best performance model for this dataset, and further optimize the selected model. It is expected to through this research, we can provide a references for HIV prevention through PrEP in local area. In addition, we also want to present model optimization method by integrating causal inferential theory to machine learning model. \ 
 \
 
 ##### Hypothsis
-Given the introduction, in this research, the **primary aim** is exploring significant predictors for outcome: Decision of taking PrEP (original variable name: agree_prep). And the **secondary aim** is comparing different machine learning model's performances given a imbalanced dataset.\
+In this research, the **primary aim** is exploring significant predictors for outcome: Decision of taking PrEP (original variable name: agree_prep). And the **secondary aim** is comparing machine learning model's performances given a imbalanced dataset. Specifically, we will compare different machine learning algorithms and the different performance between original selected model and optimized model.\
 
               
 ### Methods
@@ -81,7 +81,7 @@ dfcheck<-skimr::skim(df503)%>%
   dplyr::filter(character.empty==0)%>% # Keep completed case
   dplyr::filter(character.n_unique >1) #Remove only one level factor
 
-#Convert categorical variables as factor and derived age group: agegrp based on continous var: age
+#Convert categorical variables as factor and derived age group: agegrp based on continuous var: age
 fdat<-df503%>%
    dplyr::select(dfcheck$skim_variable, agree_prep, age)%>%
    dplyr::mutate(age=as.numeric(age),
@@ -128,6 +128,7 @@ library(geodata)
 library(RColorBrewer)
 library(cowplot)
 
+#Cleaning dataset for map visualization. Create a separate dataset called dfmap. 
 dfmap<-df503%>%
     dplyr::select(event_name,longitude,latitude, agree_prep,county,gross_income, age, sex, education_level,employ_status,marriage_status)%>%
     dplyr::filter(event_name=="Baseline")%>%
@@ -188,6 +189,7 @@ plot_grid(p1,p2, labels="AUTO") #Put the two plots together
 
 ```
 \
+
 From the map plots, we can see one geographic location is out of Kenya, which should be suspected as outlier and need to check with data provider, and most sampled participants are in southern of Kenya, this will limited the generalization when we want to use the result to prdict participant in other regions of Kenya. Other than that, when eyeball these two plot, it looks like all samples are randomly across the Kenya, in other words, there is no obvious sign that all sampled participants are all from rich area or poverty area, neither for the variable of age (Second plot).\
 \
 
@@ -324,6 +326,19 @@ datsig<-fdat%>%
   #mutate(No.=seq_along(name))%>%
   kableExtra::kbl(datsig, caption = "Table 2. Variables that significant associated with outcome: by GLM algorithm ")%>%
     kableExtra::kable_classic(full_width=F, html_font = "Cambria") 
+
+#Sort P-value
+datsig2<-datsig%>%
+  arrange(desc(`P-value`))
+
+#Visualized top 19 significant vars according to their p-value
+
+ggplot(datsig, aes(reorder(Var_Name,-`P-value`, sum), `P-value`)) + 
+  geom_bar(stat ="identity")+
+  coord_flip()+
+  theme_classic()+
+  xlab("Top 19 Variable's name")+
+  ggtitle("Selected variables that are significant associated  \n  with outcome (a=0.05)")
 ```
 \
 The table lists all variables that are significant associated with outcome. However, we also want to know whether the other machine learning algorithms perform better than GLM. If so, we can choose the others to predict the outcome. Here, we also used Random Forest tree and SVM as comparison. \
@@ -334,12 +349,18 @@ The table lists all variables that are significant associated with outcome. Howe
 # Random forest tree: Top 19 dfgini
 library(randomForest)
 df.rf <- randomForest(agree_prep ~ ., data =fdat, ntree = 200, importance = TRUE)
-df.rf
 #df.rf$importance
 df.gini<-sort(df.rf$importance[,4], decreasing =T)
 dfgini<-head(df.gini,19)
   kbl(dfgini, caption="Table 3. Top 19 predictors and their gini scores: by Random forest tree algorithm", digits = 3)%>%
     kable_classic(full_width=F, html_font = "Cambria") 
+```
+
+#### 3-3. Satistic summary of RF and SVM 
+```{r}
+#Random forest tree 
+df.rf <- randomForest(agree_prep ~ ., data =fdat, ntree = 200, importance = TRUE)
+df.rf
 
 # SVM
 library(e1071)
@@ -347,14 +368,12 @@ fdat.svm <- svm(agree_prep ~ ., data = fdat, scale = TRUE, kernel ="radial")
 svm.pred <- fitted(fdat.svm)
 table(fdat$agree_prep, svm.pred) 
 ```
-
 \
 Given the results from RF and SVM, we can see that RF performs better than SVM since it can correctly predict 9 negative results whereas the SVM can correctly predict ZERO. However, both of them have unsatisfied performances due to extreme imbalanced dataset. \
-
 \
 Hence, we only use Gini score from RF as reference by creating a side by side list to present both top 19 variables/predictors which are significant associated with outcome. \
 
-#### 3-3. Create the significant associated variable list based on Random forest and GLM model 
+#### 3-4. Create the significant associated variable list based on Random forest and GLM model 
 
 ```{r message=F, warning=F}
 # Present the two selected results:
@@ -444,21 +463,22 @@ Whereas, the GLM consider more balanced outcome variables, the top 6 we included
 
 ```{r}
 #Compare top predictor generated by gini score and GLM. Exclude critieria: remove extreme imbalanced variable from model, such as outcome is less 10 obs.
-table (fdat$decline_adhere) #Top 1 in Gini score
-table (fdat$decline_other) #Top 2 in Gini score
-table (fdat$decline_risk) #Top 3 in Gini score
-table (fdat$decline_family) #Top 4 in Gini score
-table(fdat$decline_decrease) #Top 5 in Gini score
-table(fdat$decline_test) #Top 6 in Gini score
-table(fdat$service_received_msm_risk) #Top 1 in GLM
-table(fdat$service_received_msm_hiv) #Top 2 in GLM
-table(fdat$service_received_msm_condoms)#Top 3 in GLM
-table(fdat$risk_low_known)#Top 4in GLM
-table(fdat$identity_group_msm) #Top 5 in GLM
-table(fdat$risk_low_condoms)#Top 6 in GLM
+datgini6<-fdat%>%
+  dplyr::select(decline_adhere,decline_other,decline_risk,decline_family,decline_decrease,decline_test)
+datgini6%>%
+  tbl_summary()%>%
+   modify_header(label ~ "**Variable**") %>%
+   modify_caption("**Top 6 significant associated vars based on Gini score**")
 
+datglm<-fdat%>%
+  dplyr::select(service_received_msm_risk,service_received_msm_hiv,service_received_msm_condoms,risk_low_known,identity_group_msm,risk_low_condoms)
+datglm%>%
+    tbl_summary()%>%
+     modify_header(label ~ "**Variable**") %>%
+     modify_caption("**Top 6 significant associated vars based on GLM**")
 ```
 \
+
 2). **Using DAG conception to add demographic variables.** \
 According to the table 1 result, we found that only sex and age group (agegrp) have a statistical significant among different groups. So we introduce DAG conception to see which one or whether both of them should be included in to the model if these variables affect both predictors and outcome. \
 ```{r}
