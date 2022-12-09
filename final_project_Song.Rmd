@@ -331,14 +331,6 @@ datsig<-fdat%>%
 datsig2<-datsig%>%
   arrange(desc(`P-value`))
 
-#Visualized top 19 significant vars according to their p-value
-
-ggplot(datsig, aes(reorder(Var_Name,-`P-value`, sum), `P-value`)) + 
-  geom_bar(stat ="identity")+
-  coord_flip()+
-  theme_classic()+
-  xlab("Top 19 Variable's name")+
-  ggtitle("Selected variables that are significant associated  \n  with outcome (a=0.05)")
 ```
 \
 The table lists all variables that are significant associated with outcome. However, we also want to know whether the other machine learning algorithms perform better than GLM. If so, we can choose the others to predict the outcome. Here, we also used Random Forest tree and SVM as comparison. \
@@ -354,6 +346,7 @@ df.gini<-sort(df.rf$importance[,4], decreasing =T)
 dfgini<-head(df.gini,19)
   kbl(dfgini, caption="Table 3. Top 19 predictors and their gini scores: by Random forest tree algorithm", digits = 3)%>%
     kable_classic(full_width=F, html_font = "Cambria") 
+
 ```
 
 #### 3-3. Satistic summary of RF and SVM 
@@ -371,7 +364,7 @@ table(fdat$agree_prep, svm.pred)
 \
 Given the results from RF and SVM, we can see that RF performs better than SVM since it can correctly predict 9 negative results whereas the SVM can correctly predict ZERO. However, both of them have unsatisfied performances due to extreme imbalanced dataset. \
 \
-Hence, we only use Gini score from RF as reference by creating a side by side list to present both top 19 variables/predictors which are significant associated with outcome. \
+Hence, we only use Gini score from RF as reference to see whether the top 6 variables we initially selected are also coverd in Gini result. To bettwer compare results from GLM an RF-Gini, we create a side by side list and plot to present both top 19 variables/predictors which are significant associated with outcome. \
 
 #### 3-4. Create the significant associated variable list based on Random forest and GLM model 
 
@@ -380,10 +373,41 @@ Hence, we only use Gini score from RF as reference by creating a side by side li
 kbl(cbind(dfgini, datsig),caption="List 1.  Comparison of top-ranked significant varaibles by two algorithms", digits = 3)%>%
     add_header_above(c("Random Forest Model"= 2, "GLM Model" = 2))%>%
    kable_classic(full_width=F, html_font = "Cambria")
+
+
+#Visualized top 19 significant vars according to their p-value and Gini score
+
+# 1) List top 19 vars based on p-value
+
+plot1<-ggplot(datsig, aes(reorder(Var_Name,-`P-value`, sum), `P-value`)) + 
+            geom_bar(stat ="identity")+
+            coord_flip()+
+            theme_classic()+
+            theme(plot.title = element_text(hjust=0, size = 8, face = "bold"))+
+            xlab("Top 19 Variable's name: GLM")+
+            ggtitle("Selected variables \n that are significant \n  associated  with outcome \n (a=0.05)")
+  
+
+# 2) List top 19 vars based on gini score
+
+ginidf<-data.frame(name = names(df.gini), gini = df.gini)%>%
+  arrange(gini)%>%
+  top_n(19)
+plot2<- ggplot(ginidf, aes(reorder(name, gini, sum), gini)) + 
+            geom_bar(stat ="identity")+
+            coord_flip()+
+            theme_classic()+
+            theme(plot.title = element_text(hjust=0,size = 8, face = "bold"))+
+            xlab("Top 19 Variable's name: RF-gini")+
+            ggtitle("Selected variables \n that are significant \n associated with outcome \n (Gini Score)")
+
+# 3) Viz two plots side by side
+library(cowplot)
+plot_grid(plot1, plot2)
 ```
 \
 
-The next step is visualizing the performance for each model we introduced before (GLM, RF and SVM).  We use K-cross validation (K=10) to see whether the assumption we made before (Extreme imbalanced dataset will impact the ML performance in a negative way) is correct based on the results of ROC curve and AUC.Then, we will pick up the best performance model and variables/predictors from the list we created in previous step (3-3) to construct our final model. \
+The next step is visualizing performance for each model we introduced before (GLM, RF and SVM). We use K-cross validation (K=10) to see whether the assumption we made before (Extreme imbalanced dataset will impact the ML performance in a negative way) can be verified based on the results of ROC curve and AUC.Then, we will pick up the best performance model and use the top 6 variables/predictors from the list we created in previous step (see 3-4) to construct our original model. 
 \
 
 #### 4. Model selection and evaluation
@@ -429,13 +453,13 @@ plot.roc(obs.outputs, pred.outputs.glm, percent = TRUE,  print.auc= TRUE,print.a
 legend("bottomright", legend = c("SVM", "Random forest tree","GLM"), col = c("blue", "darkgreen","red"), lwd = 2, cex=.7)
 ```
 \
-The result shows that our two assumption is correct. First, the extreme imbalanced dataset indeed lead to very unsatisfied predicted performance for each model (None of them has AUC over 80%). In addition, among the three models, the SVM has the worst predicted performance among three ML models, which is consistent of statistics from each model.\
+The result shows that our two assumption is correct. First, the extreme imbalanced dataset indeed lead to very unsatisfied predictive performance for each model (None of them has AUC over 80%). In addition, among the three machine learning models, the SVM has the worst predictive performance, which is consistent with the statistic summary from each model (see 3-3).\
 
 \
 
 ##### 4-2. Create original GlM Model based on top 6 significant variables 
 
-Since the GLM has better performance to handle this imbalanced dataset than others, we will use GLM model and the top 6 variables from the GLM calcuation which are also appear in RF's Gini result. (See list in 3-3) .\
+Since the GLM has better performance to handle this imbalanced dataset than others, we will use GLM model and the top 6 variables from the GLM calculation which are also appear in RF's Gini result. (See list in 3-4) .\
 
 ```{r message=F, warning=F}
 glmfdat<-glm(agree_prep~identity_group_msm+service_received_msm_hiv+service_received_msm_risk+service_received_msm_condoms+risk_low_known+risk_low_condoms, data =fdat, family = binomial())
@@ -452,13 +476,13 @@ z<-as.data.frame(round(z,3))%>%
 
 ##### 4-3. Optimize predictive model
 
-Because we already know the extreme imbalanced dataset can cause unreliable statistic result. We will re-evaluate the all included variables/predictors, the goal in this process is that we want to improve the performance given the current model. It is a subjective process, which needs to do three things: One is re-consider the top variables generated by Gini score (Table 2), to see whether we should include them into model; Second, we will calculate the collinerity among the current selected variables; The third step is borrowing concept of DAG theory to see whether demographic variables should be added to increase the performance of predictive model.\
+Because we already know the extreme imbalanced dataset can cause unreliable statistic result. We will re-evaluate the all included variables/predictors, the goal in this process is that we want to improve the performance given the current GLM model. It is a relative subjective process since it requires background in this field. To achieve this optimized goal, it needs to do three things: One is re-consider the top 6 variables generated by Gini score (see table 2), to see whether we should also include them into current GLM model; Second, we need to consider and adjust the collinerity issue for current selected variables; The third step is borrowing concept of DAG theory to see whether demographic variables should be added to increase the performance of predictive model.\
 
 1). **Re-consider top variables generated by gini score.** \
 
-According to the Gini score result, we see several variables that have prefix of "decline" have significant association with outcome. But we can tell that the common characteristic of these top predictors generated by RF is that all of them have extreme imbalanced outcome number:  the number for "yes" is less 10. For example, the top 1 variable: decline_adhere, the number of "yes" is only 9 out of 1123. \
+According to the Gini score result, we see several variables with prefix of "decline" have significant association with outcome. But we can see that they all have extreme imbalanced outcome number: the number for "yes" is less 10. For example, the top 1 variable: decline_adhere, the number of "yes" is only 9 out of 1132. \
 
-Whereas, the GLM consider more balanced outcome variables, the top 6 we included in model are relative balanced compare to the top 6 variables in Gini score(table 3), which all variable's  "yes" number is over 25. That is why we should include top 6 variables from GLM instead of RF. \So we adhere to the GLM models result and NOT adding any of these variables in to current model.\
+Whereas, the GLM consider more balanced outcome variables, the top 6 variables that we included in model are relative balanced compare to the top 6 variables in Gini score (see table 3), which all small portion of outcome (variable=="yes") are over 25. That is why we should include top 6 variables from GLM instead of RF. Hence, for this first step, we adhere to the GLM model's result and decide NOT to add any of new variables from Gini score result into current model.\
 \
 
 ```{r}
@@ -480,7 +504,7 @@ datglm%>%
 \
 
 2). **Using DAG conception to add demographic variables.** \
-According to the table 1 result, we found that only sex and age group (agegrp) have a statistical significant among different groups. So we introduce DAG conception to see which one or whether both of them should be included in to the model if these variables affect both predictors and outcome. \
+According to the demographic (table 1 result), we found that only sex and age group (agegrp) have a statistical significant association with outcome. Even though the directed acyclic graph (DAG) has limited implication for cross-sectional type dataset since it does not refelct temporal realtionship between exposure and outcome,we still want to borrow this conception to see which one or whether both of them should be included into the model if these variables affect both predictors and outcome. \
 ```{r}
 library(dagitty)
 library(lavaan)
@@ -499,7 +523,7 @@ plot(g)
 ```
 \
 
-According to the DAG, we can see that agegroup should be included into the model becasue it affects both current selected vars and outcome given the background knowledge. However, even though the sex shows statistical different in table 1, we do not need to include it becasue the sex may affect all current selected variables, however, it does not affect the outcome (decision of taking PrEP). In other words, there is no evidence that the women has siginifcant willingness to take PrEP compared to men or vice versa. \
+According to the DAG, we can see that agegroup should be included into the model because it affects both current selected vars and outcome given the background knowledge. However, even though the sex shows statistical different in table 1, we do not need to include it because the sex may affect all current selected variables, however, it does not affect the outcome (decision of taking PrEP). In other words, there is no evidence that the women has significant different willingness to take PrEP compared to men or vice versa. \
 
 3). **Collinearity checking before and after optimize model** \
 
@@ -516,11 +540,11 @@ kableExtra::kable (b,caption="Table 6. VIF for variables in optimized GLM model"
     kableExtra::kable_classic(full_width=F, html_font = "Cambria")
 ```
 \
-In this process, we found the variable "identity_group_msm", "service_recived_msm_hiv", "service_received_msm_risk" have a high collinearity: their VIF are close or higher than 5. So we should remove some of these variables to eliminate the Col linearity. Because based on background knowledge, msm received service usually contains HIV prevention service, so we removed the variable of service_received_msm_hiv, similarly reason, we should remove identity_group_msm.\
+In this process, we found the variable "identity_group_msm", "service_recived_msm_hiv", "service_received_msm_risk" have a high collinearity issue: their VIFs are close or higher than 5. So we should adjust them by removing some of these variables to eliminate the collinearity. Based on background knowledge, MSM received service usually contains HIV prevention service, so we remove the variable of "service_received_msm_hiv", similarly reason, we should remove "identity_group_msm".\
 
-After adjusted, we can see the variables VIF decrease to under 2.This implies that we successfully fix collinearity issue in original model and selected variabls before.\ 
+After adjusted, we can see the variables VIF decrease to under 2, which is lower than the threshold we use in this research (VIF<2.5).This implies that we successfully fixed collinearity issue.\ 
 \
-So, our final selected predictive variables are: \
+Therefore, our final selected predictive variables are narrow down from 6 to 5, with 1 new added variable age group (agegrp). The table shows the change of variables in original GLM model and optimized GLM model.  \
 
 |**Variables in original GLM**|**Variables in optimized GLM**|**Outcome/dependent variable**| 
 |:---|:---|:---|
@@ -564,7 +588,7 @@ glmfdat2%>%
   bold_labels()
 ```
 \
-The result shows that most of variables have statistical significant association to outcome.Those variables can also be used as a good predictors to predict whether the target population are willing to take PrEP or not. Even though we can see strong magnitude for certain variables such as var: Never had sex (OR=18.1), we also notice that the 95% CI is extremely wide, some of them also across the 1, which indicates the statistical result is not precise. This is expected output given the fact that extreme unbalanced number of outcome aforementioned. \
+The result shows that most of variables have statistical significant association to outcome.Those variables can also be used as a good predictors to predict whether the target population are willing to take PrEP or not. Even though we can see strong magnitude for certain variables such as var: Never had sex (OR=18.1), we also notice that 95% CI is extremely wide, some of them also across the 1, which indicates the statistical results is not precise. This is an expected output given the fact that extreme imbalanced dataset aforementioned. \
 \
 
 ```{r}
@@ -592,7 +616,7 @@ data.frame(
 \
 
 #### 4-6. Compare two models'performance
-The last step for this project is reviewing the performance of the optimized model. By comparing to original model, which was only selected the top 6 variables (overlapped with Gini Score result) from GLM result, we use ROC curve and AUC value to see whehter the optimized model improve the rationality and predictive precision. \
+The last step for this project is evaluating the performance of optimized model. By comparing to original model, which was only selected the top 6 variables (overlapped with Gini Score result) from GLM result, we use ROC curve and AUC value to see whether the optimized model improves the predictive performance. \
 
 ```{r message=F, warning=F}
 N = nrow(fdat)
@@ -627,7 +651,7 @@ plot.roc(obs.outputs, pred.outputs.glm2, percent = TRUE, print.auc = TRUE, print
 legend("bottomright", legend = c("GLM: Unadjusted variables","GLM: Adjusted variables by DAG"), col = c("red","navyblue"), lwd =2, cex=.7)
 ```
 \
-From the plot, we can see that the optimized the model increases the precision of perdition. The AUC value is increased from 78.2% to 82.4%. This means that adding variable of age group helps to improve the models performance. \
+From the plot, we can see that the optimized the model increases the model's performance.The AUC value is increased from 76% to 82.6%. This means that adding variable of age group helps to improve the models performance. \
 
 \
 
@@ -640,25 +664,25 @@ The result shows that in optimized model, 4 variables out of 6 have statistical 
 
 To interpret this result, we can say that the people who are MSM and have not received the risk education show stronger willingness to take PrEP, this result is inconsistent with previous finding, the further research should be carried to explore the reason. Other than that, the people who are older, have had sex before, and who do not consistently use condom are more likely to consider taking PrEP. Those findings are consistent with previous studies.\
 
-The result also shows the practical meaning. It reveals the target population and key factors regard to PrEP usage in Kenya if the local government want to advocate it as the prevention for HIV. \
+The result also shows the practical implications. It reveals the key factors regard to PrEP usage among high risk population in Kenya if the local government want to advocate PrEP as a HIV prevention strategy. \
 \
 2) **Variable selection** \
-The Jilinde study has total 4115 obs. and 367 variables. After data cleaning, the final dataset downsized to 1132 observations and 106 variables. Among all of these variables, 19 variables are selected by GLM model as the significant predictors for outcome. And most of the variables are consistent with the result of Gini score result. In other words, they are overlapped with Random forest tree's result. \
+The Jilinde study has total 4115 obs. and 367 variables. After data cleaning, the final dataset downsized to 1132 observations and 106 variables. Among all of these variables, 19 variables are selected by GLM model as the significant predictors for outcome. And most of the variables are consistent with the result of Gini score result (Table 3-3). \
 The outcome inspection result shows that the dependent variable has extreme unbalanced outcomes (24 v.s 1108).This severely affects the model's performance. \
 \
 3) **Model selection and evaluation** \
-The study compared SVM, Random forest tree and GLM for the predictive performance.The result shows that GLM has the best performance for this extreme unbalanced number outcome. The worst performance is SVM model, which can not correctly predict for small number of outcome (correctness is zero). \
+The study compared SVM, Random forest tree and GLM for predictive performance.The result shows that GLM has the best performance for this extreme imbalanced dataset.The worst performance is SVM model, which can not correctly predict for small number of outcome (correctness is zero). \
 
-The GLM and top 6 significant predictors are used as original predictive model, the AUC value and ROC result shows it only has relative good performance (AUC is about 76.0%). After we introduced the DAG theory to the model optimization, we removed some variables which are suspected as EMM and added some demographic variables. The final GLM model shows that this process improves the model's performance and promote rationality, comparing the original GLM model, the AUC value is increased to 82.6%. \
+The GLM and top 6 significant predictors are used as original predictive model, the AUC value and ROC result shows it only has relative good performance (AUC is about 76.0%). After optimization, the optimized GLM model shows that optimization improves the model's performance. Compare to original GLM model, the AUC value is increased to 82.6%. \
 \ 
 
 ### Discussion
 
 1) **Unbalanced number of outcome** \
-Given the fact that this project used the imbalanced data, it proves that machine learning models usually cannot perfectly handle that. Specifically, imblalanced dataset here means that a classification data set with skewed class proportions. According to the previous study, machine learning models will encounter a problem for such type of dataset because when it trains on unbalanced datasets, it often have poor results when they have to generalize (predict a class or classify unseen observations). Moreover, some models will be more susceptible to unbalanced data than others despite of the chosen algorithm.[6] This has been proved in this project as we found in model selection section. To make this result more meaningful in practice, further some advanced methods such as random oversampling should be introduced to fix it.[7] \
+Given the fact that this project used the imbalanced data, it proves that machine learning models usually cannot perfectly handle that. Specifically, imbalanced dataset here means that a classification data set with skewed class proportions. According to the previous study, machine learning models will encounter a problem for such type of dataset because when it trains on imbalanced datasets, it often have poor results when they have to generalize (predict a class or classify unseen observations). Moreover, some models will be more susceptible to unbalanced data than others despite of the chosen algorithm.[6] This has been proved in this project as we found in model selection section. To make this result more meaningful in practice, further some advanced methods such as random oversampling should be introduced to fix it.[7] To fix this type of dataset in practice, the advanced method such as random oversampling should be considered.In addition, since the weight in different outcome groups is different, it could be better to evaluate model by using F1 score and AUPRC.  \
 \
 2) **Completed case**\
-This study used the completed cases to implement the analysis, which may cause biases since the missing value is highly not lost randomly. In practice, we should consider to adopt the imputation package in R to fix the missing value issue if the missing proportion is under the certain percentage, say less than 30%. Morever, it implies the importance for researchers about the quality of dataset when they design and collect the dataset.[8][9] \
+This study used a completed dataset to analyze, which may cause biases since the missing values may not lose randomly. In practice, we should consider to adopt the imputation package in R to fix missing value issue if the missing proportion is under the certain percentage, say less than 30%. Moreover, it also shows the importance for researchers about keeping high quality of dataset when they design and collect the data.[8][9] \
 
 
 ### Reference
