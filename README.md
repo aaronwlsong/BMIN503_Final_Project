@@ -39,7 +39,7 @@ Pre-Exposure Prophylaxis (PrEP) has been proven an effective way to prevent HIV 
 
 Hypothesis: 
 	Primary aim: Exploring significant predictors for outcome: Decision of taking PrEP. 
-	The secondary aim: Compare different machine learning model's  given an imbalanced dataset. 
+	The secondary aim: For imbalanced dataset,  Compare machine learning performance: 1) among different machine learning models and 2) the performance before and after optimized selected model.
 
 Significance: 
            We expect that the research can provide practical references for HIV prevention by using PrEP in Kenya. In addition, present a plausible way to optimize model based on machine learning model. 
@@ -54,12 +54,12 @@ Method:
      Step 6: Optimize GLM model. 
      
 Result: 
-    1) Main result: 4 variables out of 6 have statistical significant association with outcome. They could be considered as predictors for decision of taking PrEP. 
-    2) Variable selection: Toal 18 significant associated variables/predictors are selected by GLM model given the a=0.05 level. The outcome inspection result shows that the dependent variable has 	    extreme unbalanced outcomes (24 v.s 1108) which severely affects the model's performance. 
-    3)Model selection and evaluation: GLM has the best performance for this extreme unbalanced number outcome compared to SVM and Random forest tree. 
+    1) Main result: 4 variables out of 5 have statistical significant association with outcome. They could be used as predictors for decision of taking PrEP. 
+    2) Variable selection: Toal 6 out of 19 significant associated variables/predictors are selected by original GLM model given the a=0.05 level. After optimization, the final GLM includes 5 independent variables. The inspection for outcome variable shows that the dependent variable has extreme imbalanced outcomes (24 v.s 1108) which severely affects the model's performance. 
+    3)Model selection and evaluation: GLM has the best performance for this extreme imbalanced dataset compared to SVM and Random forest tree. 
 
 Limitation: 
-     1) Imbalanced outcome affect the performance and accuracy when run different ML models.
-     2) Using completed dataset will introduce the bias since the missing value is not completely random. 
+     1) Imbalanced dataset affects the performance and accuracy when run different ML models.
+     2) Using completed dataset will introduce the biases since the missing value is not completely random. 
                   
                   
