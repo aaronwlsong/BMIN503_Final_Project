@@ -40,8 +40,8 @@ Pre-Exposure Prophylaxis (PrEP) has been proven an effective way to prevent HIV 
 
 **Hypothesis:**  
 
-	Primary aim: Exploring significant predictors for outcome: Decision of taking PrEP.  
-	The secondary aim: For imbalanced dataset,  Compare machine learning performance: 1) among different machine learning models and 2) the performance before and after optimized selected model. 
+Primary aim: Exploring significant predictors for outcome: Decision of taking PrEP.  
+The secondary aim: For imbalanced dataset,  Compare machine learning performance: 1) among different machine learning models and 2) the performance before and after optimized selected model. 
 	
 **Significance:** 
 
@@ -50,7 +50,7 @@ It is expected to through this research, we can provide a references for HIV pre
 
 **Method:** 
 
-     A Curated, completed dataset is used in this project. To achieve our aim, there are mainly 6 steps for analysis: 
+A Curated, completed dataset is used in this project. To achieve our aim, there are mainly 6 steps for analysis: 
      
      Step 1: Outcome variable inspection; 
      Step 2: Demographic variable inspection; 
@@ -61,13 +61,13 @@ It is expected to through this research, we can provide a references for HIV pre
      
 **Result:** 
  
-    1) Main result: 4 variables out of 5 have statistical significant association with outcome. They could be used as predictors for decision of taking PrEP.  
-    2) Variable selection: Toal 6 out of 19 significant associated variables/predictors are selected by original GLM model given the a=0.05 level. After optimization, the final GLM includes 5 independent variables. The inspection for outcome variable shows that the dependent variable has extreme imbalanced outcomes (24 v.s 1108) which severely affects the model's performance.  
-    3)Model selection and evaluation: GLM has the best performance for this extreme imbalanced dataset compared to SVM and Random forest tree. 
+1) Main result: 4 variables out of 5 have statistical significant association with outcome. They could be used as predictors for decision of taking PrEP.  
+2) Variable selection: Toal 6 out of 19 significant associated variables/predictors are selected by original GLM model given the a=0.05 level. After optimization, the final GLM includes 5 independent variables. The inspection for outcome variable shows that the dependent variable has extreme imbalanced outcomes (24 v.s 1108) which severely affects the model's performance.  
+3)Model selection and evaluation: GLM has the best performance for this extreme imbalanced dataset compared to SVM and Random forest tree. 
 
 **Limitation:** 
- 
-     1) Imbalanced dataset affects the performance and accuracy when run different ML models. 
-     2) Using completed dataset will introduce the biases since the missing value is not completely random. 
+
+1) Imbalanced dataset affects the performance and accuracy when run different ML models. 
+2) Using completed dataset will introduce the biases since the missing value is not completely random. 
                   
                   
