@@ -42,7 +42,7 @@ Pre-Exposure Prophylaxis (PrEP) has been proven an effective way to prevent HIV 
 	Primary aim: Exploring significant predictors for outcome: Decision of taking PrEP. \
 	The secondary aim: For imbalanced dataset,  Compare machine learning performance: 1) among different machine learning models and 2) the performance before and after optimized selected model.\
 
-Significance: 
+**Significance: **
            We expect that the research can provide practical references for HIV prevention by using PrEP in Kenya. In addition, present a plausible way to optimize model based on machine learning model. 
 
 **Method: **
@@ -61,7 +61,8 @@ Significance:
     2) Variable selection: Toal 6 out of 19 significant associated variables/predictors are selected by original GLM model given the a=0.05 level. After optimization, the final GLM includes 5 independent variables. The inspection for outcome variable shows that the dependent variable has extreme imbalanced outcomes (24 v.s 1108) which severely affects the model's performance. \
     3)Model selection and evaluation: GLM has the best performance for this extreme imbalanced dataset compared to SVM and Random forest tree. \
 
-**Limitation:** 
+**Limitation:**
+ 
      1) Imbalanced dataset affects the performance and accuracy when run different ML models.\
      2) Using completed dataset will introduce the biases since the missing value is not completely random. 
                   
