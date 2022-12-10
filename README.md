@@ -36,7 +36,7 @@ This is BMIN503/EPID600 Final Project made by Weilu Song.
 
 **Introduction:** 
 
-Pre-Exposure Prophylaxis (PrEP) has been proven an effective way to prevent HIV infection.However, the PrEP coverage among high risk population is still low. So, it is urgent to explore the most associated factors with decision of taking PrEP for local policy makers to deploy the prevention strategy. In addition, the reason behind taking PrEP is complex, because making a decision of taking PrEP is determined by multiple factors. Therefore, when conduct and collect the dataset, the researchers always try to capture as many participant's characteristics as possible and leads a results that a typical epidemiological dataset contains hundreds of variables. It is needed to find a best fitted machine learning algorithm to assist to identify the significant variables. 
+Pre-Exposure Prophylaxis (PrEP) has been proven an effective way to prevent HIV infection.However, the PrEP coverage among high risk population is still low. So, it is urgent to explore the most associated factors with decision of taking PrEP for local policy makers to deploy the prevention strategy. In addition, the reason behind taking PrEP is complex because it is determined by multiple factors. Therefore, when conduct and collect the dataset, the researchers always try to capture as many participant's characteristics as possible and leads a results that a typical epidemiological dataset contains hundreds of variables. It is needed to find a best fitted machine learning algorithm to assist to identify the significant variables. 
 
 **Hypothesis:**  
 
