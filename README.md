@@ -22,7 +22,8 @@ DUE DATE FOR FINAL VERSION: 12/09/22 11:59PM. This is a hard deadline. Turn in w
 
 This is BMIN503/EPID600 Final Project made by Weilu Song.
 
-The folder contains 5 files, they are:
+**The folder contains 5 files, they are:**
+
 1) Final project_song. Rmd. This file contains all original codes that are used to generate the project.
 2) Final_project_Song.html. This file contains the whole contents of project including introduction, method, result and discussion. 
 3) method pic. This .png file is used to show the method flow, it is kept as a separated picture in the same path/folder with .Rmd file and used in .Rmd file. 
@@ -33,7 +34,7 @@ The folder contains 5 files, they are:
 
 **Title**: Exploring significant predictors for decision of taking PrEP among high-risk population 
 
-**Introduction: ** 
+**Introduction:** 
 
 Pre-Exposure Prophylaxis (PrEP) has been proven an effective way to prevent HIV infection.However, the PrEP coverage among high risk population is still low. The reason behind it is complex, because making a decision of taking PrEP is determined by multiple factors. When conduct and collect the dataset, the researchers always try to capture as much participant's characteristic as possible. Therefore, it leads a results that a typical epidemiological dataset contains hundreds of variables. Therefore, it is needed to integrate the machine learning method to identify the significant variables and further optimize the model based on the selected variables.  
 
@@ -42,12 +43,12 @@ Pre-Exposure Prophylaxis (PrEP) has been proven an effective way to prevent HIV 
 	Primary aim: Exploring significant predictors for outcome: Decision of taking PrEP.  
 	The secondary aim: For imbalanced dataset,  Compare machine learning performance: 1) among different machine learning models and 2) the performance before and after optimized selected model. 
 	
-**Significance: ** 
+**Significance:** 
 
            It is expected to through this research, we can provide a references for HIV prevention through PrEP in local area. In addition, we also want to present model optimization method by integrating causal inferential theory to machine learning model. 
            
 
-**Method: ** 
+**Method:** 
 
      A Curated, completed dataset is used in this project. To achieve our aim, there are mainly 6 steps for analysis: \
      Step 1: Outcome variable inspection; 
