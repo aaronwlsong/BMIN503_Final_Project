@@ -18,7 +18,7 @@ DUE DATE FOR FINAL VERSION: 12/09/22 11:59PM. This is a hard deadline. Turn in w
 <!-- Links -->
 [forking]: https://guides.github.com/activities/forking/
 
-------------**Below is the information about this project**----------------------------------
+------------**Below is the information about this project**--------------------------------------------
 
 This is BMIN503/EPID600 Final Project made by Weilu Song.
 
@@ -30,7 +30,7 @@ This is BMIN503/EPID600 Final Project made by Weilu Song.
 4) Jilide_coh_2022aug.csv. This is original dataset that was used in this project.
 5) README.md. This is a readme file which contains the list of files and their brief information as well as a gist of research. 
 
---------------------**Below is the gist of this research**--------------------------------------------- 
+--------------------**Below is the gist of this research**---------------------------------------------------- 
 
 **Title**: Exploring significant predictors for decision of taking PrEP among high-risk population 
 
