@@ -50,6 +50,8 @@ It is expected to through this research, we can provide a references for HIV pre
 
 **Method:** 
 
+![Figure 1. Flowchart of research method](/Users/weilus-adm/Desktop/BMIN5030/4_Final_project/BMI5030_FP_Song/method.png)
+
 A Curated, completed dataset is used in this project. To achieve our aim, there are mainly 6 steps for analysis: 
      
      Step 1: Outcome variable inspection; 
