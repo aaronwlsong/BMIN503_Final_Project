@@ -31,21 +31,23 @@ The folder contains 5 files, they are:
 
 --------------------Below is the gist of this research--------------------------------------------- 
 
-**Title**: Exploring significant predictors for decision of taking PrEP among high-risk population
+**Title**: Exploring significant predictors for decision of taking PrEP among high-risk population\
 
-**Introduction: **
+**Introduction: **\
 
 Pre-Exposure Prophylaxis (PrEP) has been proven an effective way to prevent HIV infection.However, the PrEP coverage among high risk population is still low. The reason behind it is complex, because making a decision of taking PrEP is determined by multiple factors. When conduct and collect the dataset, the researchers always try to capture as much participant's characteristic as possible. Therefore, it leads a results that a typical epidemiological dataset contains hundreds of variables. Therefore, it is needed to integrate the machine learning method to identify the significant variables and further optimize the model based on the selected variables. \
 
-**Hypothesis:** 
+**Hypothesis:** \
 
 	Primary aim: Exploring significant predictors for outcome: Decision of taking PrEP. \
 	The secondary aim: For imbalanced dataset,  Compare machine learning performance: 1) among different machine learning models and 2) the performance before and after optimized selected model.\
 
-**Significance: **
-           We expect that the research can provide practical references for HIV prevention by using PrEP in Kenya. In addition, present a plausible way to optimize model based on machine learning model. 
+**Significance: **\
 
-**Method: **
+           It is expected to through this research, we can provide a references for HIV prevention through PrEP in local area. In addition, we also want to present model optimization method by integrating causal inferential theory to machine learning model.\
+           
+
+**Method: **\
 
      A Curated, completed dataset is used in this project. To achieve our aim, there are mainly 6 steps for analysis: \
      Step 1: Outcome variable inspection; \
@@ -55,13 +57,13 @@ Pre-Exposure Prophylaxis (PrEP) has been proven an effective way to prevent HIV 
      Step 5: Create original GLM model; \
      Step 6: Optimize and evaluate GLM model. 
      
-**Result:**
+**Result:**\
  
     1) Main result: 4 variables out of 5 have statistical significant association with outcome. They could be used as predictors for decision of taking PrEP. \
     2) Variable selection: Toal 6 out of 19 significant associated variables/predictors are selected by original GLM model given the a=0.05 level. After optimization, the final GLM includes 5 independent variables. The inspection for outcome variable shows that the dependent variable has extreme imbalanced outcomes (24 v.s 1108) which severely affects the model's performance. \
     3)Model selection and evaluation: GLM has the best performance for this extreme imbalanced dataset compared to SVM and Random forest tree. \
 
-**Limitation:**
+**Limitation:**\
  
      1) Imbalanced dataset affects the performance and accuracy when run different ML models.\
      2) Using completed dataset will introduce the biases since the missing value is not completely random. 
