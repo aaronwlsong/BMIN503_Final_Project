@@ -62,8 +62,8 @@ A Curated, completed dataset is used in this project. To achieve our aim, there 
 **Result:** 
  
 1) Main result: 4 variables out of 5 have statistical significant association with outcome. They could be used as predictors for decision of taking PrEP.  
-2) Variable selection: Toal 6 out of 19 significant associated variables/predictors are selected by original GLM model given the a=0.05 level. After optimization, the final GLM includes 5 independent variables. The inspection for outcome variable shows that the dependent variable has extreme imbalanced outcomes (24 v.s 1108) which severely affects the model's performance.  
-3)Model selection and evaluation: GLM has the best performance for this extreme imbalanced dataset compared to SVM and Random forest tree. 
+2) Variable selection: Toal 6 out of 19 significant associated variables/predictors are selected by original GLM model given the a=0.05 level. After optimization, the final GLM includes 5 independent variables. The inspection for outcome variable shows that the dependent variable has extreme imbalanced outcomes (24 v.s 1108) which severely affects the model's performance. 
+3) Model selection and evaluation: GLM has the best performance for this extreme imbalanced dataset compared to SVM and Random forest tree. 
 
 **Limitation:** 
 
