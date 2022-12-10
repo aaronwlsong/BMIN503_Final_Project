@@ -35,7 +35,7 @@ Title: Exploration of significant predictors for decision of taking PrEP among h
 
 Introduction: 
 
-Pre-Exposure Prophylaxis (PrEP) has been proven an effective way to prevent HIV infection.However, the PrEP coverage among high risk population is still low. The reason behind it is complex, because making a decision of taking PrEP is determined by multiple factors. When conduct and collect the dataset, the researchers always try to capture as much participant's characteristic as possible. Therefore, it leads a results that a typical epidemiological dataset contains hundreds of variables. Therefore, it is needed to integrate the machine learning method to identify the significant variables and further optimize the model based on the selected variables. 
+Pre-Exposure Prophylaxis (PrEP) has been proven an effective way to prevent HIV infection.However, the PrEP coverage among high risk population is still low. The reason behind it is complex, because making a decision of taking PrEP is determined by multiple factors. When conduct and collect the dataset, the researchers always try to capture as much participant's characteristic as possible. Therefore, it leads a results that a typical epidemiological dataset contains hundreds of variables. Therefore, it is needed to integrate the machine learning method to identify the significant variables and further optimize the model based on the selected variables. \
 
 Hypothesis: 
 	Primary aim: Exploring significant predictors for outcome: Decision of taking PrEP. 
@@ -46,12 +46,12 @@ Significance:
 
 Method: 
      A Curated, completed dataset is used in this project. To achieve our aim, there are mainly 6 steps for analysis: 
-     Step 1: Outcome variable inspection;
-     Step 2: Demographic variable inspection;
-     Step 3: Variable selection;
-     Step 4: Model evaluation;
-     Step 5: Create original GLM model; 
-     Step 6: Optimize GLM model. 
+     Step 1: Outcome variable inspection; \
+     Step 2: Demographic variable inspection;\
+     Step 3: Variable selection;\
+     Step 4: Model evaluation;\
+     Step 5: Create original GLM model; \
+     Step 6: Optimize and evaluate GLM model. \
      
 Result: 
     1) Main result: 4 variables out of 5 have statistical significant association with outcome. They could be used as predictors for decision of taking PrEP. 
