@@ -45,12 +45,13 @@ Pre-Exposure Prophylaxis (PrEP) has been proven an effective way to prevent HIV 
 	
 **Significance:** 
 
-           It is expected to through this research, we can provide a references for HIV prevention through PrEP in local area. In addition, we also want to present model optimization method by integrating causal inferential theory to machine learning model. 
+It is expected to through this research, we can provide a references for HIV prevention through PrEP in local area. In addition, we also want to present model optimization method by integrating causal inferential theory to machine learning model. 
            
 
 **Method:** 
 
-     A Curated, completed dataset is used in this project. To achieve our aim, there are mainly 6 steps for analysis: \
+     A Curated, completed dataset is used in this project. To achieve our aim, there are mainly 6 steps for analysis: 
+     
      Step 1: Outcome variable inspection; 
      Step 2: Demographic variable inspection; 
      Step 3: Variable selection; 
